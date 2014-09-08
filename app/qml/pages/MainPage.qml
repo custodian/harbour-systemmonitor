@@ -84,6 +84,9 @@ Page {
                 graphHeight: 200
                 minY: 0
                 maxY: 100
+                valueConverter: function(value) {
+                    return value.toFixed(2);
+                }
 
                 onClicked: pageStack.push(Qt.resolvedUrl("BatteryPage.qml"), {deepView: page.deepView})
             }

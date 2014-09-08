@@ -106,6 +106,9 @@ CoverBackground {
             gridX: 1
             minY: 0
             maxY: 100
+            valueConverter: function(value) {
+                return value.toFixed(2);
+            }
 
             clickEnabled: false
 

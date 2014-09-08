@@ -14,7 +14,7 @@ Name:       harbour-systemmonitor
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    SysMon
 Version:    0.2
-Release:    5
+Release:    6
 Group:      Qt/Qt
 License:    LICENSE
 URL:        http://thecust.net/

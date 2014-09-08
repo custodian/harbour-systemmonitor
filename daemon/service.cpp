@@ -15,12 +15,6 @@ Service::Service(QObject *parent, Settings *settings) :
     connect(m_background, SIGNAL(running()), SLOT(backgroundRunning()));
     m_background->setWakeupFrequency(BackgroundActivity::Range);
 
-    /*
-    connect(&m_timer,SIGNAL(timeout()), SLOT(gatherData()));
-    m_timer.setTimerType(Qt::VeryCoarseTimer);
-    m_timer.setInterval(1000);
-    m_timer.start();
-    */
     dbus = new DBusAdapter(this);
 
     updateIntervalChanged(m_settings->updateInterval);
@@ -47,12 +41,7 @@ void Service::backgroundRunning()
 void Service::updateIntervalChanged(int interval) {
     qDebug() << "Update interval" << interval;
     m_background->setWakeupRange(interval, interval);
-    /*
-    if (m_timer.interval() != interval*1000) {
-        m_timer.setInterval(interval*1000);
-    }
-    */
-    if (m_background->state() != BackgroundActivity::Running) {
+    if (m_background->state() == BackgroundActivity::Stopped) {
         m_background->run();
     }
 }

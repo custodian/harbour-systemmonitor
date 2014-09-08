@@ -36,9 +36,7 @@ private:
     Settings *m_settings;
     QList<DataSource*> m_sources;
 
-    //TODO: change to BackgroundActivity from 'libkeepalive-devel'
     BackgroundActivity *m_background;
-    //QTimer m_timer;
     QDateTime m_updateTime;
 
     Storage m_storage;
