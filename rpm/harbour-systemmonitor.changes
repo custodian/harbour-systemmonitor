@@ -1,0 +1,14 @@
+# Rename this file as harbour-systemmonitor.changes to include changelog
+# entries in your RPM file.
+#
+# Add new changelog entries following the format below.
+# Add newest entries to the top of the list.
+# Separate entries from eachother with a blank line.
+
+# * date Author's Name <author's email> version-release
+# - Summary of changes
+
+* Mon Sep 09 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.2-5
+- Initial release
+
+

@@ -1,0 +1,10 @@
+[Unit]
+Description=Basil's System Monitor Service
+After=pre-user-session.target
+
+[Service]
+ExecStart=/usr/bin/harbour-systemmonitord
+Restart=always
+
+[Install]
+WantedBy=user-session.target
