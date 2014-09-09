@@ -5,34 +5,50 @@ import org.nemomobile.configuration 1.0
 Page {
     id: page
 
-    property int deepView: 12
-    onDeepViewChanged: {
-        for (var i=0;i<depthModel.count;i++) {
-            if (depthModel.get(i).interval == deepView) {
-                comboBoxDepthView.currentIndex = i;
-                break;
-            }
-        }
+    property bool active: Qt.application.active
+    onActiveChanged: {
         updateGraph()
     }
+    property bool needUpdate: true
+
+    ConfigurationGroup {
+        id: settings
+        path: "/net/thecust/systemmonitor"
+
+        property int deepView: 12
+        onDeepViewChanged: {
+            for (var i=0;i<depthModel.count;i++) {
+                if (depthModel.get(i).interval == deepView) {
+                    comboBoxDepthView.currentIndex = i;
+                    break;
+                }
+            }
+            updateGraph()
+        }
+    }
+
+    Component.onCompleted: {
+        settings.deepViewChanged();
+    }
+
 
     function updateGraph() {
-        graphCpu.setPoints(sysmon.cpuTotal(deepView, graphCpu.graphWidth));
-        graphBattery.setPoints(sysmon.batteryCharge(deepView, graphBattery.graphWidth));
-        graphWlanRx.setPoints(sysmon.wlanRx(deepView, graphWlanRx.graphWidth));
-        graphCellRx.setPoints(sysmon.cellRx(deepView, graphCellRx.graphWidth));
+        if (page.active && needUpdate) {
+                graphCpu.setPoints(sysmon.cpuTotal(settings.deepView, graphCpu.graphWidth));
+                graphBattery.setPoints(sysmon.batteryCharge(settings.deepView, graphBattery.graphWidth));
+                graphWlanTotal.setPoints(sysmon.wlanTotal(settings.deepView, graphWlanTotal.graphWidth));
+                graphCellTotal.setPoints(sysmon.cellTotal(settings.deepView, graphCellTotal.graphWidth));
+                needUpdate = false;
+        }
     }
 
     Connections {
         target: sysmon
         onDataUpdated: {
             console.log("Conections dataUpdated");
+            needUpdate = true;
             updateGraph();
         }
-    }
-
-    Component.onCompleted: {
-        deepViewChanged();
     }
 
     SilicaFlickable {
@@ -71,7 +87,7 @@ Page {
                         delegate: MenuItem {
                             text: model.label
                             onClicked: {
-                                page.deepView = model.interval
+                                settings.deepView = model.interval
                             }
                         }
                     }
@@ -88,7 +104,7 @@ Page {
                     return value.toFixed(2);
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("BatteryPage.qml"), {deepView: page.deepView})
+                onClicked: pageStack.push(Qt.resolvedUrl("BatteryPage.qml"), {deepView: settings.deepView})
             }
 
             GraphData {
@@ -101,12 +117,12 @@ Page {
                     return value.toFixed(1);
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("CpuPage.qml"), {deepView: page.deepView})
+                onClicked: pageStack.push(Qt.resolvedUrl("CpuPage.qml"), {deepView: settings.deepView})
             }
 
             GraphData {
-                id: graphWlanRx
-                graphTitle: qsTr("Wlan-data received")
+                id: graphWlanTotal
+                graphTitle: qsTr("Wlan traffic")
                 graphHeight: 200
                 scale: true
                 unitsY: "Kb"
@@ -114,12 +130,12 @@ Page {
                     return (value/1000).toFixed(0);
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("WlanPage.qml"), {deepView: page.deepView})
+                onClicked: pageStack.push(Qt.resolvedUrl("WlanPage.qml"), {deepView: settings.deepView})
             }
 
             GraphData {
-                id: graphCellRx
-                graphTitle: qsTr("Cell-data received")
+                id: graphCellTotal
+                graphTitle: qsTr("Cell traffic")
                 graphHeight: 200
                 scale: true
                 unitsY: "Kb"
@@ -127,7 +143,7 @@ Page {
                     return (value/1000).toFixed(0);
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("CellPage.qml"), {deepView: page.deepView})
+                onClicked: pageStack.push(Qt.resolvedUrl("CellPage.qml"), {deepView: settings.deepView})
             }
         }
     }

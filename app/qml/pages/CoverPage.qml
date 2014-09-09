@@ -1,10 +1,13 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import "."
+import org.nemomobile.configuration 1.0
 
 CoverBackground {
     id: cover
 
+    property int coverGraphHeight: cover.height * 0.5
+
+    property bool needUpdate: true
     property bool active: status == Cover.Active
     onActiveChanged: {
         if (active) {
@@ -12,27 +15,30 @@ CoverBackground {
         }
     }
 
-    //TODO: save load from dconf
-    property int graphNum: 1
+    ConfigurationGroup {
+        id: settings
+        path: "/net/thecust/systemmonitor"
+
+        property int coverGraphNum: 0
+    }
+
     function nextGraph() {
-        if (graphNum == 2) {
-            graphNum = 1;
-        } else {
-            graphNum++;
-        }
+        needUpdate = true;
+        settings.coverGraphNum = (settings.coverGraphNum+1)%4
     }
 
     function updateGraph() {
-        currentGraph.item.updateGraph();
+        if (active && needUpdate) {
+            currentGraph.item.updateGraph();
+            needUpdate = false;
+        }
     }
 
     Connections {
         target: sysmon
         onDataUpdated: {
             console.log("Conections dataUpdated");
-            if (active) {
-                updateGraph();
-            }
+            updateGraph();
         }
     }
 
@@ -51,11 +57,16 @@ CoverBackground {
                 right: parent.right
             }
             sourceComponent: {
-                switch(graphNum){
-                case 1:
+                switch(settings.coverGraphNum){
+                case 0:
                     return cpuGraph;
+                case 1:
+                    return wlanGraph;
                 case 2:
+                    return cellGraph;
+                case 3:
                     return batteryGraph;
+
                 }
             }
             onStatusChanged: {
@@ -82,7 +93,7 @@ CoverBackground {
 
         GraphData {
             graphTitle: qsTr("CPU")
-            graphHeight: cover.height * 0.5
+            graphHeight: coverGraphHeight
             gridX: 1
             minY: 0
             maxY: 100
@@ -98,11 +109,52 @@ CoverBackground {
     }
 
     Component {
+        id: wlanGraph
+        GraphData {
+            id: graphWlanTotal
+            graphTitle: qsTr("Wlan")
+            graphHeight: coverGraphHeight
+            gridX: 1
+            scale: true
+            unitsY: "Kb"
+            valueConverter: function(value) {
+                return (value/1000).toFixed(0);
+            }
+            clickEnabled: false
+
+            function updateGraph() {
+                setPoints(sysmon.wlanTotal(1, graphWidth));
+            }
+        }
+    }
+
+    Component {
+        id: cellGraph
+
+        GraphData {
+            id: graphCellTotal
+            graphTitle: qsTr("Cell")
+            graphHeight: coverGraphHeight
+            gridX: 1
+            scale: true
+            unitsY: "Kb"
+            valueConverter: function(value) {
+                return (value/1000).toFixed(0);
+            }
+            clickEnabled: false
+
+            function updateGraph() {
+                setPoints(sysmon.cellTotal(1, graphWidth));
+            }
+        }
+    }
+
+    Component {
         id: batteryGraph
 
         GraphData {
             graphTitle: qsTr("BAT")
-            graphHeight: cover.height * 0.5
+            graphHeight: coverGraphHeight
             gridX: 1
             minY: 0
             maxY: 100

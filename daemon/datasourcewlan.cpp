@@ -66,6 +66,6 @@ void DataSourceWlan::gatherData()
     m_prevBytesRx = bytesRx;
     m_prevBytesTx = bytesTx;
 
-    emit dataGathered(DataSource::NetworkWlanRx, deltaRx);
-    emit dataGathered(DataSource::NetworkWlanTx, deltaTx);
+    emit systemDataGathered(DataSource::NetworkWlanRx, deltaRx);
+    emit systemDataGathered(DataSource::NetworkWlanTx, deltaTx);
 }

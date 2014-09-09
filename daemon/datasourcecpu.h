@@ -9,6 +9,10 @@ class DataSourceCPU:
     public DataSource
 {
     Q_OBJECT
+
+    //jiffs count readed from /proc/stat line
+    static const int JIFF_COUNT = 5;
+
 public:
     DataSourceCPU(QObject *parent = 0);
 

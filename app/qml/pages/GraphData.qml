@@ -173,10 +173,6 @@ Column {
             //renderTarget: Canvas.FramebufferObject
             //renderStrategy: Canvas.Threaded
 
-            Component.onCompleted: {
-                console.log("width:", width, "height:", height);
-            }
-
             property real stepX: 1
             property real stepY: (maxY-minY)/(height-1)
 
@@ -206,8 +202,7 @@ Column {
                 ctx.globalCompositeOperation = "source-over";
                 ctx.clearRect(0,0,width,height);
 
-                console.log("maxY", maxY, "minY", minY, "height", height, "StepY", stepY);
-
+                //console.log("maxY", maxY, "minY", minY, "height", height, "StepY", stepY);
 
                 var end = points.length;
 

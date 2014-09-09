@@ -12,9 +12,9 @@ Name:       harbour-systemmonitor
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
-Summary:    SysMon
-Version:    0.2
-Release:    6
+Summary:    System Monitor
+Version:    0.3
+Release:    10
 Group:      Qt/Qt
 License:    LICENSE
 URL:        http://thecust.net/
@@ -30,7 +30,7 @@ BuildRequires:  pkgconfig(keepalive)
 BuildRequires:  desktop-file-utils
 
 %description
-SysMon allows you to aggregate and graph system performance data.
+System Monitor allows you to aggregate and graph system performance data.
 
 
 %prep

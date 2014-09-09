@@ -10,10 +10,18 @@ Page {
         path: "/net/thecust/systemmonitor"
         property int updateInterval: 60
         onUpdateIntervalChanged: {
-            console.log("Loaded interval", updateInterval);
             for (var i=0;i<timeModel.count;i++) {
                 if (timeModel.get(i).interval == updateInterval) {
                     comboBoxUpdateInterval.currentIndex = i;
+                    break;
+                }
+            }
+        }
+        property int archiveLength: 7
+        onArchiveLengthChanged: {
+            for (var i=0;i<archiveModel.count;i++) {
+                if (archiveModel.get(i).interval == archiveLength) {
+                    comboBoxArchiveLength.currentIndex = i;
                     break;
                 }
             }
@@ -33,7 +41,7 @@ Page {
             id: column
 
             width: page.width
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingMedium
             PageHeader {
                 title: qsTr("Settings")
             }
@@ -55,11 +63,34 @@ Page {
                 }
             }
 
+            ComboBox {
+                id: comboBoxArchiveLength
+                label: qsTr("Data archive length")
+                currentIndex: 0
+                menu: ContextMenu {
+                    Repeater {
+                        model: archiveModel
+                        delegate: MenuItem {
+                            text: model.label
+                            onClicked: {
+                                settings.archiveLength = model.interval
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Spacer
+            Item {
+                height: Theme.itemSizeSmall
+                width: parent.width
+            }
+
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("Clear all data")
                 onClicked: {
-                    remorse.execute("Clearing data", function() {
+                    remorse.execute("Clearing archive data", function() {
                         sysmon.clearData();
                     });
                 }

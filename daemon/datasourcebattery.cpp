@@ -27,5 +27,5 @@ void DataSourceBattery::gatherData()
     int chargeFull = QString(fileFull.readLine()).toInt();
     int chargeNow = QString(fileNow.readLine()).toInt();
 
-    emit dataGathered(DataSource::BatteryPercentage, float(chargeNow) / chargeFull * 100);
+    emit systemDataGathered(DataSource::BatteryPercentage, float(chargeNow) / chargeFull * 100);
 }

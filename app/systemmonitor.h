@@ -29,12 +29,15 @@ public slots:
 
     QVariant wlanRx(int depth, int width);
     QVariant wlanTx(int depth, int width);
+    QVariant wlanTotal(int depth, int width);
 
     QVariant cellRx(int depth, int width);
     QVariant cellTx(int depth, int width);
+    QVariant cellTotal(int depth, int width);
 
 private:
-    QVariant getData(DataSource::Type type, int depth, int width, bool avg);
+    QVariant getSystemData(DataSource::Type type, int depth, int width, bool avg);
+    QVariant getSystemData(const QList<DataSource::Type> &types, int depth, int width, bool avg);
     QList<QVariant> filterData(const QVector<QVariantMap>& data, const QDateTime &from, const QDateTime &to, int width, bool avg);
 
     Storage m_storage;

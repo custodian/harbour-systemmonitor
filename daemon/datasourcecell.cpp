@@ -68,6 +68,6 @@ void DataSourceCell::gatherData()
     m_prevBytesRx = bytesRx;
     m_prevBytesTx = bytesTx;
 
-    emit dataGathered(DataSource::NetworkCellRx, deltaRx);
-    emit dataGathered(DataSource::NetworkCellTx, deltaTx);
+    emit systemDataGathered(DataSource::NetworkCellRx, deltaRx);
+    emit systemDataGathered(DataSource::NetworkCellTx, deltaTx);
 }

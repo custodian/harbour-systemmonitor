@@ -8,6 +8,12 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Tue Sep 10 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.3-10
+- Removed unnecessary redraws
+- Cover graphs added
+- Settings for archive length
+- Remember graphs choise
+
 * Mon Sep 09 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.2-5
 - Initial release
 

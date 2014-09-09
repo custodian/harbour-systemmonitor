@@ -2,6 +2,9 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import "pages"
 import net.thecust.sysmon 1.0
+import org.nemomobile.configuration 1.0
+
+//TODO: combine all settings here
 
 ApplicationWindow
 {
@@ -33,6 +36,18 @@ ApplicationWindow
         ListElement {
             label: "10 minutes"
             interval: 600
+        }
+    }
+
+    ListModel {
+        id: archiveModel
+        ListElement {
+            label: "7 days"
+            interval: 7
+        }
+        ListElement {
+            label: "14 days"
+            interval: 14
         }
     }
 

@@ -36,20 +36,34 @@ void Storage::clearData()
     query.exec("DELETE FROM data");
 }
 
-QVector<QVariantMap> Storage::getData(DataSource::Type type, const QDateTime &from, const QDateTime &to) {
-    qDebug() << "getData" << type << from << to;
+QVector<QVariantMap> Storage::getSystemData(const QList<DataSource::Type> &types, const QDateTime &from, const QDateTime &to) {
+    //qDebug() << "getData" << type << from << to;
+    QStringList strTypes;
+    foreach(DataSource::Type type, types) {
+        strTypes.append(QString::number(int(type)));
+    }
     QVector<QVariantMap> data;
     QSqlQuery query(m_db);
-    query.prepare("SELECT time, value FROM data WHERE type = :type AND time BETWEEN :from AND :to ORDER BY time ASC");
-    query.bindValue(":type", type);
+    query.prepare(QString("SELECT time, SUM(value) as value"
+                  " FROM data "
+                  " WHERE "
+                  " type IN (%1) "
+                  " AND time BETWEEN :from AND :to "
+                  " GROUP BY time "
+                  " ORDER BY time ASC").arg(strTypes.join(',')));
+    //QSqlQuery cannot bind string into value;
+    //query.bindValue(":type", strTypes.join(','));
     query.bindValue(":from", from.toTime_t());
     query.bindValue(":to", to.toTime_t());
-    query.exec();
-    while(query.next()) {
-        QVariantMap pt;
-        pt["x"] = query.value("time");
-        pt["y"] = query.value("value");
-        data.append(pt);
+    if (query.exec()) {
+        while(query.next()) {
+            QVariantMap pt;
+            pt["x"] = query.value("time");
+            pt["y"] = query.value("value");
+            data.append(pt);
+        }
+    } else {
+        qDebug() << "getSystemData error:" << query.lastError().text();
     }
     return data;
 }
@@ -58,15 +72,16 @@ void Storage::removeObsoleteData(const QDateTime &time) {
     QSqlQuery query(m_db);
     query.prepare("DELETE FROM data WHERE time < :time");
     query.bindValue(":time", time.toTime_t());
-    qDebug() << "Remove obsolete data" << query.exec();
+    //qDebug() << "Remove obsolete data" <<
+    query.exec();
 }
 
-void Storage::save(DataSource::Type type, const QDateTime &time, float value) {
-
+void Storage::saveSystemData(DataSource::Type type, const QDateTime &time, float value) {
     QSqlQuery query(m_db);
     query.prepare("INSERT INTO data(time, type, value) VALUES(:time, :type, :value)");
     query.bindValue(":time", time.toTime_t());
     query.bindValue(":type", type);
     query.bindValue(":value", value);
-    qDebug () << "Saving data" << query.exec();
+    //qDebug () << "Saving data" <<
+    query.exec();
 }

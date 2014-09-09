@@ -28,7 +28,10 @@ void Service::initDataSources() {
     //m_sources.append(new DataSourceTemp(this));
 
     foreach(const DataSource* source, m_sources) {
-        connect(source, SIGNAL(dataGathered(DataSource::Type,float)), SLOT(dataGathered(DataSource::Type,float)));
+        connect(source, SIGNAL(systemDataGathered(DataSource::Type,float))
+                , SLOT(systemDataGathered(DataSource::Type,float)));
+        connect(source, SIGNAL(applicationDataGathered(ApplicationInfo*,DataSource::Type,float))
+                , SLOT(applicationDataGathered(ApplicationInfo*,DataSource::Type,float)));
     }
 }
 
@@ -39,7 +42,7 @@ void Service::backgroundRunning()
 }
 
 void Service::updateIntervalChanged(int interval) {
-    qDebug() << "Update interval" << interval;
+    //qDebug() << "Update interval" << interval;
     m_background->setWakeupRange(interval, interval);
     if (m_background->state() == BackgroundActivity::Stopped) {
         m_background->run();
@@ -47,13 +50,13 @@ void Service::updateIntervalChanged(int interval) {
 }
 
 void Service::gatherData() {
-    qDebug() << "Gather data start";
+    //qDebug() << "Gather data start";
     m_updateTime = QDateTime::currentDateTimeUtc();
     foreach (DataSource *source, m_sources) {
         source->gatherData();
     }
     removeObsoleteData();
-    qDebug() << "Gather data end";
+    //qDebug() << "Gather data end";
     emit dataUpdated();
 }
 
@@ -62,7 +65,12 @@ void Service::removeObsoleteData() {
 }
 
 
-void Service::dataGathered(DataSource::Type type, float value) {
-    qDebug() << "DataGathered" << type << value;
-    m_storage.save(type, m_updateTime, value);
+void Service::systemDataGathered(DataSource::Type type, float value) {
+    //qDebug() << "DataGathered" << type << value;
+    m_storage.saveSystemData(type, m_updateTime, value);
+}
+
+void Service::applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value)
+{
+    //TODO: m_storage.saveApplicationData(appInfo, type, value);
 }

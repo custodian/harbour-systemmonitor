@@ -16,9 +16,9 @@ SOURCES += \
     dbusadapter.cpp \
     dbusconnector.cpp \
     service.cpp \
+    storage.cpp \
     datasource.cpp \
     datasourcecpu.cpp \
-    storage.cpp \
     datasourcebattery.cpp \
     datasourcewlan.cpp \
     datasourcecell.cpp
@@ -28,10 +28,9 @@ HEADERS += \
     dbusadapter.h \
     dbusconnector.h \
     service.h \
-    service.h \
+    storage.h \
     datasource.h \
     datasourcecpu.h \
-    storage.h \
     datasourcebattery.h \
     datasourcewlan.h \
     datasourcecell.h

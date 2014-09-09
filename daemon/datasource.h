@@ -3,6 +3,13 @@
 
 #include <QObject>
 
+class ApplicationInfo {
+public:
+    QString name;
+    QString path;
+    int id;
+};
+
 class DataSource:
     public QObject
 {
@@ -20,7 +27,8 @@ public:
         NetworkWlanRx,
         NetworkCellTx,
         NetworkCellRx,
-        BatteryPercentage = 400
+        BatteryPercentage = 400,
+        MemoryUsed = 500
     };
 
     DataSource(QObject *parent = 0);
@@ -28,7 +36,8 @@ public:
     virtual void gatherData() = 0;
 
 signals:
-    void dataGathered(DataSource::Type type, float value);
+    void systemDataGathered(DataSource::Type type, float value);
+    void applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value);
 };
 
 #endif // DATASOURCE_H

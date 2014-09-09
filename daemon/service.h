@@ -22,7 +22,8 @@ signals:
     void dataUpdated();
 
 public slots:
-    void dataGathered(DataSource::Type type, float value);
+    void systemDataGathered(DataSource::Type type, float value);
+    void applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value);
     void updateIntervalChanged(int interval);
 
 private slots:

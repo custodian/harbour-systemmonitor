@@ -12,12 +12,13 @@ public:
     explicit Storage(QObject *parent = 0);
 
     void clearData();
-    QVector<QVariantMap> getData(DataSource::Type type, const QDateTime &from, const QDateTime &to);
+    QVector<QVariantMap> getSystemData(const QList<DataSource::Type> &types, const QDateTime &from, const QDateTime &to);
+    //QVector<QVariantMap> getApplicationData();
 
 signals:
 
 public slots:
-    void save(DataSource::Type type, const QDateTime &time, float value);
+    void saveSystemData(DataSource::Type type, const QDateTime &time, float value);
     void removeObsoleteData(const QDateTime &time);
 
 private:
