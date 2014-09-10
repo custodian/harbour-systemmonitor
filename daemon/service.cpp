@@ -3,6 +3,7 @@
 #include "datasourcebattery.h"
 #include "datasourcecell.h"
 #include "datasourcewlan.h"
+#include "datasourcememory.h"
 
 Service::Service(QObject *parent, Settings *settings) :
     QObject(parent), m_settings(settings)
@@ -21,10 +22,18 @@ Service::Service(QObject *parent, Settings *settings) :
 }
 
 void Service::initDataSources() {
+    //DataSource registers needed file from /proc/pid.
+    //Service scans/saves files
+    //ServiceCall dataGather
+    //DataSource emit systemDataGathered
+    //DataSource request applications list
+    //DataSource emit appDataGathered
+
     m_sources.append(new DataSourceCPU(this));
     m_sources.append(new DataSourceBattery(this));
     m_sources.append(new DataSourceWlan(this));
     m_sources.append(new DataSourceCell(this));
+    m_sources.append(new DataSourceMemory(this));
     //m_sources.append(new DataSourceTemp(this));
 
     foreach(const DataSource* source, m_sources) {
@@ -51,6 +60,9 @@ void Service::updateIntervalChanged(int interval) {
 
 void Service::gatherData() {
     //qDebug() << "Gather data start";
+    //TODO: make snapshot of system
+    //makeSnapshot();
+
     m_updateTime = QDateTime::currentDateTimeUtc();
     foreach (DataSource *source, m_sources) {
         source->gatherData();
@@ -72,5 +84,7 @@ void Service::systemDataGathered(DataSource::Type type, float value) {
 
 void Service::applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value)
 {
+    //TODO: app detection
+    //http://stackoverflow.com/questions/6075013/linux-detect-launching-of-programs
     //TODO: m_storage.saveApplicationData(appInfo, type, value);
 }

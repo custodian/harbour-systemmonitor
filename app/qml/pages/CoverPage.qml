@@ -37,7 +37,6 @@ CoverBackground {
     Connections {
         target: sysmon
         onDataUpdated: {
-            console.log("Conections dataUpdated");
             updateGraph();
         }
     }
@@ -61,9 +60,9 @@ CoverBackground {
                 case 0:
                     return cpuGraph;
                 case 1:
-                    return wlanGraph;
+                    return networkGraph;
                 case 2:
-                    return cellGraph;
+                    return ramGraph;
                 case 3:
                     return batteryGraph;
 
@@ -109,10 +108,9 @@ CoverBackground {
     }
 
     Component {
-        id: wlanGraph
+        id: networkGraph
         GraphData {
-            id: graphWlanTotal
-            graphTitle: qsTr("Wlan")
+            graphTitle: qsTr("NET")
             graphHeight: coverGraphHeight
             gridX: 1
             scale: true
@@ -123,28 +121,27 @@ CoverBackground {
             clickEnabled: false
 
             function updateGraph() {
-                setPoints(sysmon.wlanTotal(1, graphWidth));
+                setPoints(sysmon.networkTotal(1, graphWidth));
             }
         }
     }
 
     Component {
-        id: cellGraph
+        id: ramGraph
 
         GraphData {
-            id: graphCellTotal
-            graphTitle: qsTr("Cell")
+            graphTitle: qsTr("RAM")
             graphHeight: coverGraphHeight
             gridX: 1
             scale: true
-            unitsY: "Kb"
+            unitsY: "Mb"
             valueConverter: function(value) {
                 return (value/1000).toFixed(0);
             }
             clickEnabled: false
 
             function updateGraph() {
-                setPoints(sysmon.cellTotal(1, graphWidth));
+                setPoints(sysmon.ramUsed(1, graphWidth));
             }
         }
     }

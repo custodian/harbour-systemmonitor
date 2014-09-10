@@ -21,7 +21,8 @@ SOURCES += \
     datasourcecpu.cpp \
     datasourcebattery.cpp \
     datasourcewlan.cpp \
-    datasourcecell.cpp
+    datasourcecell.cpp \
+    datasourcememory.cpp
 
 HEADERS += \
     settings.h \
@@ -33,7 +34,8 @@ HEADERS += \
     datasourcecpu.h \
     datasourcebattery.h \
     datasourcewlan.h \
-    datasourcecell.h
+    datasourcecell.h \
+    datasourcememory.h
 
 #OTHER_FILES += \
 #    net.thecust.systemmonitord.xml

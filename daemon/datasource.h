@@ -21,14 +21,15 @@ public:
         CpuUser,
         CpuSystem,
         CpuIO,
-        MemoryTotal = 200,
-        MemorySwap,
+        RAMUsed = 200,
+        RAMCached,
+        RAMBuffers,
+        SwapUsed = 250,
         NetworkWlanTx = 300,
         NetworkWlanRx,
         NetworkCellTx,
         NetworkCellRx,
-        BatteryPercentage = 400,
-        MemoryUsed = 500
+        BatteryPercentage = 400
     };
 
     DataSource(QObject *parent = 0);

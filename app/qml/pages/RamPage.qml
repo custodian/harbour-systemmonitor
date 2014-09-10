@@ -17,8 +17,8 @@ Page {
     }
 
     function updateGraph() {
-        cellRx.setPoints(sysmon.cellRx(deepView, cellRx.graphWidth));
-        cellTx.setPoints(sysmon.cellTx(deepView, cellTx.graphWidth));
+        ramUsed.setPoints(sysmon.ramUsed(deepView, ramUsed.graphWidth));
+        swapUsed.setPoints(sysmon.swapUsed(deepView, swapUsed.graphWidth));
     }
 
     Connections {
@@ -45,7 +45,7 @@ Page {
             width: page.width
             spacing: Theme.paddingLarge
             PageHeader {
-                title: qsTr("Cell networks")
+                title: qsTr("RAM usage")
             }
 
             ComboBox {
@@ -66,11 +66,11 @@ Page {
             }
 
             GraphData {
-                id: cellRx
-                graphTitle: qsTr("Received data")
+                id: ramUsed
+                graphTitle: qsTr("RAM")
                 graphHeight: 200
                 scale: true
-                unitsY: "Kb"
+                unitsY: "Mb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -79,11 +79,11 @@ Page {
             }
 
             GraphData {
-                id: cellTx
-                graphTitle: qsTr("Transmitted data")
+                id: swapUsed
+                graphTitle: qsTr("Swap")
                 graphHeight: 200
                 scale: true
-                unitsY: "Kb"
+                unitsY: "Mb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

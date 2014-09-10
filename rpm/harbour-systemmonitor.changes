@@ -8,7 +8,10 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
-* Tue Sep 10 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.3-10
+* Wed Sep 10 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.4-11
+- Ram graph added
+
+* Tue Sep 9 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.3-10
 - Removed unnecessary redraws
 - Cover graphs added
 - Settings for archive length

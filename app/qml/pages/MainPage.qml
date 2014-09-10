@@ -23,6 +23,7 @@ Page {
                     break;
                 }
             }
+            needUpdate = true;
             updateGraph()
         }
     }
@@ -34,8 +35,9 @@ Page {
 
     function updateGraph() {
         if (page.active && needUpdate) {
-                graphCpu.setPoints(sysmon.cpuTotal(settings.deepView, graphCpu.graphWidth));
                 graphBattery.setPoints(sysmon.batteryCharge(settings.deepView, graphBattery.graphWidth));
+                graphCpu.setPoints(sysmon.cpuTotal(settings.deepView, graphCpu.graphWidth));
+                graphRam.setPoints(sysmon.ramUsed(settings.deepView, graphRam.graphWidth))                ;
                 graphWlanTotal.setPoints(sysmon.wlanTotal(settings.deepView, graphWlanTotal.graphWidth));
                 graphCellTotal.setPoints(sysmon.cellTotal(settings.deepView, graphCellTotal.graphWidth));
                 needUpdate = false;
@@ -45,7 +47,6 @@ Page {
     Connections {
         target: sysmon
         onDataUpdated: {
-            console.log("Conections dataUpdated");
             needUpdate = true;
             updateGraph();
         }
@@ -118,6 +119,19 @@ Page {
                 }
 
                 onClicked: pageStack.push(Qt.resolvedUrl("CpuPage.qml"), {deepView: settings.deepView})
+            }
+
+            GraphData {
+                id: graphRam
+                graphTitle: qsTr("RAM usage")
+                graphHeight: 200
+                scale: true
+                unitsY: "Mb"
+                valueConverter: function(value) {
+                    return (value/1000).toFixed(0)
+                }
+
+                onClicked: pageStack.push(Qt.resolvedUrl("RamPage.qml"), {deepView: settings.deepView})
             }
 
             GraphData {

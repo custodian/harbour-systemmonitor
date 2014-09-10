@@ -19,11 +19,16 @@ signals:
 
 public slots:
     void clearData();
+    QVariant getDatabaseSize();
+    QVariant getUnitsCollected();
 
     QVariant cpuTotal(int depth, int width);
     QVariant cpuUser(int depth, int width);
     QVariant cpuSystem(int depth, int width);
     QVariant cpuIO(int depth, int width);
+
+    QVariant ramUsed(int depth, int width);
+    QVariant swapUsed(int depth, int width);
 
     QVariant batteryCharge(int depth, int width);
 
@@ -34,6 +39,8 @@ public slots:
     QVariant cellRx(int depth, int width);
     QVariant cellTx(int depth, int width);
     QVariant cellTotal(int depth, int width);
+
+    QVariant networkTotal(int depth, int width);
 
 private:
     QVariant getSystemData(DataSource::Type type, int depth, int width, bool avg);

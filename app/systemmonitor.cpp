@@ -11,6 +11,16 @@ SystemMonitor::SystemMonitor(QObject *parent) :
     );
 }
 
+QVariant SystemMonitor::getUnitsCollected()
+{
+    return QVariant::fromValue(m_storage.getUnitsCollected());
+}
+
+QVariant SystemMonitor::getDatabaseSize()
+{
+    return QVariant::fromValue(m_storage.getDatabaseSize());
+}
+
 void SystemMonitor::clearData()
 {
     m_storage.clearData();
@@ -105,6 +115,16 @@ QVariant SystemMonitor::cpuIO(int depth, int width)
     return getSystemData(DataSource::CpuIO, depth, width, true);
 }
 
+QVariant SystemMonitor::ramUsed(int depth, int width)
+{
+    return getSystemData(DataSource::RAMUsed, depth, width, true);
+}
+
+QVariant SystemMonitor::swapUsed(int depth, int width)
+{
+    return getSystemData(DataSource::SwapUsed, depth, width, true);
+}
+
 QVariant SystemMonitor::batteryCharge(int depth, int width)
 {
     return getSystemData(DataSource::BatteryPercentage, depth, width, true);
@@ -141,6 +161,16 @@ QVariant SystemMonitor::cellTx(int depth, int width)
 QVariant SystemMonitor::cellTotal(int depth, int width)
 {
     QList<DataSource::Type> types;
+    types.append(DataSource::NetworkCellRx);
+    types.append(DataSource::NetworkCellTx);
+    return getSystemData(types, depth, width, false);
+}
+
+QVariant SystemMonitor::networkTotal(int depth, int width)
+{
+    QList<DataSource::Type> types;
+    types.append(DataSource::NetworkWlanRx);
+    types.append(DataSource::NetworkWlanTx);
     types.append(DataSource::NetworkCellRx);
     types.append(DataSource::NetworkCellTx);
     return getSystemData(types, depth, width, false);

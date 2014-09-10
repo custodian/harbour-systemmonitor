@@ -102,8 +102,8 @@ ApplicationWindow
     SystemMonitor {
         id: sysmon
 
-        onDataUpdated: {
+        /*onDataUpdated: {
             console.log("SystemMonitor dataUpdated");
-        }
+        }*/
     }
 }

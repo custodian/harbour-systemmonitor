@@ -23,7 +23,6 @@ Page {
     Connections {
         target: sysmon
         onDataUpdated: {
-            console.log("Conections dataUpdated");
             updateGraph();
         }
     }

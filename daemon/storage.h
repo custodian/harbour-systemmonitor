@@ -15,6 +15,8 @@ public:
     QVector<QVariantMap> getSystemData(const QList<DataSource::Type> &types, const QDateTime &from, const QDateTime &to);
     //QVector<QVariantMap> getApplicationData();
 
+    qint64 getDatabaseSize();
+    qint64 getUnitsCollected();
 signals:
 
 public slots:
@@ -22,6 +24,7 @@ public slots:
     void removeObsoleteData(const QDateTime &time);
 
 private:
+    QString m_filePath;
     QSqlDatabase m_db;
 };
 

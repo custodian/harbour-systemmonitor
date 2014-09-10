@@ -45,6 +45,8 @@ Column {
     property bool noData: true
 
     function setPoints(data) {
+        if (!data) return;
+
         var pointMaxY = 0;
         if (data.length > 0) {
             minX = data[0].x;

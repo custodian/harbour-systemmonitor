@@ -9,10 +9,10 @@ Storage::Storage(QObject *parent) :
     if (!dataPath.exists()) {
         dataPath.mkpath(".");
     }
-    QString filePath = dataPath.absoluteFilePath("base.sqlite");
-    qDebug() << "Opening database" << filePath;
+    m_filePath = dataPath.absoluteFilePath("base.sqlite");
+    qDebug() << "Opening database" << m_filePath;
     m_db = QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName(filePath);
+    m_db.setDatabaseName(m_filePath);
     m_db.open();
     if (m_db.isOpen()) {
         m_db.transaction();
@@ -28,6 +28,23 @@ Storage::Storage(QObject *parent) :
     } else {
         qDebug() << "Failed to open database";
     }
+}
+
+qint64 Storage::getDatabaseSize()
+{
+    return QFileInfo(m_filePath).size();
+}
+
+qint64 Storage::getUnitsCollected()
+{
+    qint64 count = 0;
+    QSqlQuery query(m_db);
+    if (query.exec("SELECT count(*) as cnt FROM data")) {
+        if (query.next()) {
+            count = query.value("cnt").toInt();
+        }
+    }
+    return count;
 }
 
 void Storage::clearData()
