@@ -10,9 +10,7 @@ CoverBackground {
     property bool needUpdate: true
     property bool active: status == Cover.Active
     onActiveChanged: {
-        if (active) {
-            updateGraph();
-        }
+        updateGraph();
     }
 
     ConfigurationGroup {
@@ -37,6 +35,7 @@ CoverBackground {
     Connections {
         target: sysmon
         onDataUpdated: {
+            needUpdate = true;
             updateGraph();
         }
     }

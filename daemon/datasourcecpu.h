@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include "datasource.h"
+#include "systemsnapshot.h"
 
 class DataSourceCPU:
     public DataSource
@@ -14,11 +15,13 @@ class DataSourceCPU:
     static const int JIFF_COUNT = 5;
 
 public:
-    DataSourceCPU(QObject *parent = 0);
+    DataSourceCPU(SystemSnapshot *parent = 0);
 
-    virtual void gatherData();
+public slots:
+    void processSystemSnapshot();
 
 private:
+    int m_cpuStat;
     QVector<int> m_prev;
 };
 

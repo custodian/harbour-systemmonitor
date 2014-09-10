@@ -1,19 +1,20 @@
 #include "datasourcecpu.h"
 #include "storage.h"
 
-DataSourceCPU::DataSourceCPU(QObject *parent):
+#include <QTextStream>
+
+DataSourceCPU::DataSourceCPU(SystemSnapshot *parent):
     DataSource(parent)
 {
+    m_cpuStat = registerSystemSource("/proc/stat");
+    connect(parent, SIGNAL(processSystemSnapshot()), SLOT(processSystemSnapshot()));
 }
 
-void DataSourceCPU::gatherData()
+void DataSourceCPU::processSystemSnapshot()
 {
     qDebug() << "CPU DATA";
-    QFile stat("/proc/stat");
-    if (!stat.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Error opening stat file";
-        return;
-    }
+
+    QTextStream stat(getSystemData(m_cpuStat));
 
     QVector<int> current;
     //skip cpu, use cpu0, cpu1, ...

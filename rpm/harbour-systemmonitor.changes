@@ -8,6 +8,10 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Thu Sep 11 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.5-12
+- Snapshot system
+- Minur UI fixes
+
 * Wed Sep 10 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.4-11
 - Ram graph added
 

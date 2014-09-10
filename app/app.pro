@@ -1,6 +1,7 @@
 TARGET = harbour-systemmonitor
 
 CONFIG += sailfishapp
+PKGCONFIG += mlite5
 
 QT += dbus sql
 QMAKE_CXXFLAGS += -std=c++0x
@@ -11,11 +12,14 @@ SOURCES += \
     app.cpp \
     ..\daemon\storage.cpp \
     ..\daemon\datasource.cpp \
+    ..\daemon\systemsnapshot.cpp \
     systemmonitor.cpp
 
 HEADERS += \
+    ..\daemon\settings.h \
     ..\daemon\storage.h \
     ..\daemon\datasource.h \
+    ..\daemon\systemsnapshot.h \
     systemmonitor.h
 
 OTHER_FILES += \

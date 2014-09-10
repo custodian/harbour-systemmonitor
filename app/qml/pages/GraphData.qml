@@ -13,7 +13,7 @@ Column {
 
     signal clicked
 
-    //TODO: move all settings to Axis object
+    //TODO: create Axis object and move all settings to it
     //property Axis axisX
     //property Axis axisY
     property string graphTitle: ""
@@ -26,7 +26,7 @@ Column {
 
     property string maskX: "hh:mm"
     property int graphHeight: 250
-    property int graphWidth: canvas.width / lineWidth
+    property int graphWidth: canvas.width / canvas.stepX
 
     property bool scale: false
     property color lineColor: Theme.highlightColor
@@ -175,8 +175,8 @@ Column {
             //renderTarget: Canvas.FramebufferObject
             //renderStrategy: Canvas.Threaded
 
-            property real stepX: 1
-            property real stepY: (maxY-minY)/(height-1)
+            property real stepX: lineWidth
+            property real stepY: (maxY-minY)/(height-2)
 
             function drawGrid(ctx) {
                 ctx.save();
@@ -217,7 +217,7 @@ Column {
                 //ctx.globalAlpha = 0.8;
                 ctx.lineWidth = lineWidth;
                 ctx.beginPath();
-                var x = 0;
+                var x = -stepX;
                 for (var i = 0; i < end; i++) {
                     var y = height - Math.floor(points[i].y / stepY) - 1;
                     if (i == 0) {
@@ -225,13 +225,16 @@ Column {
                     } else {
                         ctx.lineTo(x, y);
                     }
-                    x+=lineWidth; //point[i].x can be used for grid title
+                    x+=stepX; //point[i].x can be used for grid title
                 }
                 ctx.stroke();
                 ctx.restore();
 
                 if (end > 0) {
-                    labelLastValue.text = root.createYLabel(points[end-1].y)+root.unitsY;
+                    var lastValue = points[end-1].y;
+                    if (lastValue) {
+                        labelLastValue.text = root.createYLabel(lastValue)+root.unitsY;
+                    }
                 }
             }
         }

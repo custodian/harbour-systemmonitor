@@ -2,16 +2,18 @@
 #include <QDebug>
 #include <QFile>
 
-DataSourceWlan::DataSourceWlan(QObject *parent) :
+DataSourceWlan::DataSourceWlan(SystemSnapshot *parent) :
     DataSource(parent)
 {
-    m_filesRx.append("/sys/class/net/wlan0/statistics/rx_bytes");
-    m_filesTx.append("/sys/class/net/wlan0/statistics/tx_bytes");
+    m_sourceRx = registerSystemSource("/sys/class/net/wlan0/statistics/rx_bytes");
+    m_sourceTx = registerSystemSource("/sys/class/net/wlan0/statistics/tx_bytes");
+
+    connect(parent, SIGNAL(processSystemSnapshot()), SLOT(processSystemSnapshot()));
 }
 
 // /sys/class/net/wlan0/statistics = rx_bytes | tx_bytes
 
-void DataSourceWlan::gatherData()
+void DataSourceWlan::processSystemSnapshot()
 {
     qDebug() << "Network WLAN data";
 
@@ -20,23 +22,9 @@ void DataSourceWlan::gatherData()
 
     QVector<int> bytesRx;
     QVector<int> bytesTx;
-    foreach(const QString &filename, m_filesRx) {
-        QFile fileRx(filename);
-        if (fileRx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            bytesRx.append(QString(fileRx.readLine()).toInt());
-        } else {
-            bytesRx.append(-1);
-        }
-    }
 
-    foreach(const QString &filename, m_filesTx) {
-        QFile file(filename);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            bytesTx.append(QString(file.readLine()).toInt());
-        } else {
-            bytesTx.append(-1);
-        }
-    }
+    bytesRx.append(QString(getSystemData(m_sourceRx)).toInt());
+    bytesTx.append(QString(getSystemData(m_sourceTx)).toInt());
 
     if (m_prevBytesRx.size() == bytesRx.size()) {
         for (int i=0;i<bytesRx.size();i++) {

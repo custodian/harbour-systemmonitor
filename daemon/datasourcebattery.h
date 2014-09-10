@@ -3,18 +3,23 @@
 
 #include <QObject>
 #include <datasource.h>
+#include "systemsnapshot.h"
 
 class DataSourceBattery : public DataSource
 {
     Q_OBJECT
-public:
-    explicit DataSourceBattery(QObject *parent = 0);
 
-    virtual void gatherData();
+public:
+    explicit DataSourceBattery(SystemSnapshot *parent = 0);
+
 signals:
 
 public slots:
+    void processSystemSnapshot();
 
+private:
+    int m_batteryFull;
+    int m_batteryNow;
 };
 
 #endif // DATASOURCEBATTERY_H

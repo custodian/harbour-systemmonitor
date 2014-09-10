@@ -20,7 +20,7 @@ public:
 signals:
 
 public slots:
-    void saveSystemData(DataSource::Type type, const QDateTime &time, float value);
+    void saveSystemData(const QDateTime &time, DataSource::Type type, float value);
     void removeObsoleteData(const QDateTime &time);
 
 private:

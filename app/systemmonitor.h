@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "../daemon/storage.h"
+#include "../daemon/settings.h"
 
 #define SYSMON_DBUS_SERVICE "net.thecust.systemmonitor"
 #define SYSMON_DBUS_PATH    "/net/thecust/systemmonitor"
@@ -18,6 +19,8 @@ signals:
     void dataUpdated();
 
 public slots:
+    void updateIntervalChanged(int interval);
+
     void clearData();
     QVariant getDatabaseSize();
     QVariant getUnitsCollected();
@@ -47,7 +50,9 @@ private:
     QVariant getSystemData(const QList<DataSource::Type> &types, int depth, int width, bool avg);
     QList<QVariant> filterData(const QVector<QVariantMap>& data, const QDateTime &from, const QDateTime &to, int width, bool avg);
 
+    QTimer m_updateTimer;
     Storage m_storage;
+    Settings m_settings;
 };
 
 #endif // SYSTEMMONITOR_H

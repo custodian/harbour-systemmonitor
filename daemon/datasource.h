@@ -2,6 +2,7 @@
 #define DATASOURCE_H
 
 #include <QObject>
+#include "systemsnapshot.h"
 
 class ApplicationInfo {
 public:
@@ -32,13 +33,21 @@ public:
         BatteryPercentage = 400
     };
 
-    DataSource(QObject *parent = 0);
-
-    virtual void gatherData() = 0;
+    DataSource(SystemSnapshot *parent = 0);
 
 signals:
     void systemDataGathered(DataSource::Type type, float value);
     void applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value);
+
+protected:
+    int registerSystemSource(const QString &source);
+    int registerApplicationSource(const QString &source);
+
+    const QByteArray & getSystemData(int source);
+    //const QByteArray & getSystemData(const QString &source);
+
+private:
+    SystemSnapshot *m_snapshot;
 };
 
 #endif // DATASOURCE_H

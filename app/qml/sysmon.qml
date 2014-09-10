@@ -4,7 +4,7 @@ import "pages"
 import net.thecust.sysmon 1.0
 import org.nemomobile.configuration 1.0
 
-//TODO: combine all settings here
+//TODO: combine all dconf settings here
 
 ApplicationWindow
 {
@@ -102,8 +102,8 @@ ApplicationWindow
     SystemMonitor {
         id: sysmon
 
-        /*onDataUpdated: {
+        onDataUpdated: {
             console.log("SystemMonitor dataUpdated");
-        }*/
+        }
     }
 }

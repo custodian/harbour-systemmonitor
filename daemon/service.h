@@ -9,10 +9,11 @@
 #include "dbusadapter.h"
 #include "storage.h"
 #include "datasource.h"
+#include "systemsnapshot.h"
 
 #include "keepalive/backgroundactivity.h"
 
-class Service : public QObject
+class Service : public SystemSnapshot
 {
     Q_OBJECT
 public:
@@ -31,15 +32,16 @@ private slots:
     void backgroundRunning();
     void gatherData();
     void removeObsoleteData();
+    void commitGatheredData();
 
 private:
     DBusAdapter *dbus;
     Settings *m_settings;
     QList<DataSource*> m_sources;
 
-    BackgroundActivity *m_background;
-    QDateTime m_updateTime;
+    QList<QPair<DataSource::Type, float> > m_gatheredSystemData;
 
+    BackgroundActivity *m_background;
     Storage m_storage;
 };
 

@@ -5,21 +5,22 @@
 #include <QVector>
 #include <QString>
 #include "datasource.h"
+#include "systemsnapshot.h"
 
 class DataSourceCell : public DataSource
 {
     Q_OBJECT
 public:
-    explicit DataSourceCell(QObject *parent = 0);
+    explicit DataSourceCell(SystemSnapshot *parent = 0);
 
-    virtual void gatherData();
 signals:
 
 public slots:
+    void processSystemSnapshot();
 
 private:
-    QVector<QString> m_filesRx;
-    QVector<QString> m_filesTx;
+    QVector<int> m_sourcesRx;
+    QVector<int> m_sourcesTx;
 
     QVector<int> m_prevBytesRx;
     QVector<int> m_prevBytesTx;

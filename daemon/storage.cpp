@@ -53,7 +53,8 @@ void Storage::clearData()
     query.exec("DELETE FROM data");
 }
 
-QVector<QVariantMap> Storage::getSystemData(const QList<DataSource::Type> &types, const QDateTime &from, const QDateTime &to) {
+QVector<QVariantMap> Storage::getSystemData(const QList<DataSource::Type> &types, const QDateTime &from, const QDateTime &to)
+{
     //qDebug() << "getData" << type << from << to;
     QStringList strTypes;
     foreach(DataSource::Type type, types) {
@@ -85,7 +86,8 @@ QVector<QVariantMap> Storage::getSystemData(const QList<DataSource::Type> &types
     return data;
 }
 
-void Storage::removeObsoleteData(const QDateTime &time) {
+void Storage::removeObsoleteData(const QDateTime &time)
+{
     QSqlQuery query(m_db);
     query.prepare("DELETE FROM data WHERE time < :time");
     query.bindValue(":time", time.toTime_t());
@@ -93,7 +95,9 @@ void Storage::removeObsoleteData(const QDateTime &time) {
     query.exec();
 }
 
-void Storage::saveSystemData(DataSource::Type type, const QDateTime &time, float value) {
+void Storage::saveSystemData(const QDateTime &time, DataSource::Type type, float value)
+{
+    //TODO: use execBatch & transaction ??
     QSqlQuery query(m_db);
     query.prepare("INSERT INTO data(time, type, value) VALUES(:time, :type, :value)");
     query.bindValue(":time", time.toTime_t());

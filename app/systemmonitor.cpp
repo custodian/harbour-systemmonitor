@@ -4,11 +4,26 @@
 SystemMonitor::SystemMonitor(QObject *parent) :
     QObject(parent)
 {
+    connect(&m_settings, SIGNAL(updateIntervalChanged(int)), SLOT(updateIntervalChanged(int)));
+
+    //Timer instead of dbus connection
+    m_updateTimer.setTimerType(Qt::VeryCoarseTimer);
+    connect(&m_updateTimer, SIGNAL(timeout()), SIGNAL(dataUpdated()));
+    updateIntervalChanged(m_settings.updateInterval);
+    m_updateTimer.start();
+    /*
     qDebug() << "Connect to dataUpdate event" <<
+    //TODO: enable if dbus connection will be available
     QDBusConnection::sessionBus().connect(
         SYSMON_DBUS_SERVICE, SYSMON_DBUS_PATH, SYSMON_DBUS_IFACE,
         "dataUpdated", this, SIGNAL(dataUpdated())
     );
+    */
+}
+
+void SystemMonitor::updateIntervalChanged(int interval)
+{
+    m_updateTimer.setInterval(interval*1000);
 }
 
 QVariant SystemMonitor::getUnitsCollected()

@@ -6,7 +6,7 @@
 #include "datasourcememory.h"
 
 Service::Service(QObject *parent, Settings *settings) :
-    QObject(parent), m_settings(settings)
+    SystemSnapshot(parent), m_settings(settings)
 {
     initDataSources();
 
@@ -16,19 +16,14 @@ Service::Service(QObject *parent, Settings *settings) :
     connect(m_background, SIGNAL(running()), SLOT(backgroundRunning()));
     m_background->setWakeupFrequency(BackgroundActivity::Range);
 
-    dbus = new DBusAdapter(this);
+    //TODO: dbus disabled since until deepsleep mode investigated
+    //dbus = new DBusAdapter(this);
 
     updateIntervalChanged(m_settings->updateInterval);
 }
 
-void Service::initDataSources() {
-    //DataSource registers needed file from /proc/pid.
-    //Service scans/saves files
-    //ServiceCall dataGather
-    //DataSource emit systemDataGathered
-    //DataSource request applications list
-    //DataSource emit appDataGathered
-
+void Service::initDataSources()
+{
     m_sources.append(new DataSourceCPU(this));
     m_sources.append(new DataSourceBattery(this));
     m_sources.append(new DataSourceWlan(this));
@@ -50,7 +45,8 @@ void Service::backgroundRunning()
     m_background->wait();
 }
 
-void Service::updateIntervalChanged(int interval) {
+void Service::updateIntervalChanged(int interval)
+{
     //qDebug() << "Update interval" << interval;
     m_background->setWakeupRange(interval, interval);
     if (m_background->state() == BackgroundActivity::Stopped) {
@@ -58,33 +54,45 @@ void Service::updateIntervalChanged(int interval) {
     }
 }
 
-void Service::gatherData() {
+void Service::gatherData()
+{
     //qDebug() << "Gather data start";
-    //TODO: make snapshot of system
-    //makeSnapshot();
+    makeSnapshot();
 
-    m_updateTime = QDateTime::currentDateTimeUtc();
-    foreach (DataSource *source, m_sources) {
-        source->gatherData();
-    }
+    emit processSystemSnapshot();
+    emit processApplicationSnapshot();
+
+    commitGatheredData();
     removeObsoleteData();
-    //qDebug() << "Gather data end";
-    emit dataUpdated();
+
+    //TODO: dont emit when deep sleep mode and/or ignore dbus
+    //Disabled until investigated
+    //emit dataUpdated();
+}
+
+void Service::commitGatheredData()
+{
+    auto it = m_gatheredSystemData.begin();
+    while(it != m_gatheredSystemData.end()) {
+        m_storage.saveSystemData(m_snapshotTime, it->first, it->second);
+        it++;
+    }
+    m_gatheredSystemData.clear();
 }
 
 void Service::removeObsoleteData() {
-    m_storage.removeObsoleteData(m_updateTime.addDays(-1 * m_settings->updateInterval));
+    m_storage.removeObsoleteData(m_snapshotTime.addDays(-1 * m_settings->updateInterval));
 }
 
 
 void Service::systemDataGathered(DataSource::Type type, float value) {
     //qDebug() << "DataGathered" << type << value;
-    m_storage.saveSystemData(type, m_updateTime, value);
+    m_gatheredSystemData.append(qMakePair(type, value));
 }
 
 void Service::applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value)
 {
-    //TODO: app detection
+    //TODO: app detection via kernel module or netlink connector
     //http://stackoverflow.com/questions/6075013/linux-detect-launching-of-programs
     //TODO: m_storage.saveApplicationData(appInfo, type, value);
 }

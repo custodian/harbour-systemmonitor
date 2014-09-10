@@ -5,15 +5,17 @@
 #include <QStringList>
 #include <QDebug>
 
-DataSourceMemory::DataSourceMemory(QObject *parent) :
+DataSourceMemory::DataSourceMemory(SystemSnapshot *parent) :
     DataSource(parent)
 {
+    m_memInfo = registerSystemSource("/proc/meminfo");
+    connect(parent, SIGNAL(processSystemSnapshot()), SLOT(processSystemSnapshot()));
 }
 
-void DataSourceMemory::gatherData()
+void DataSourceMemory::processSystemSnapshot()
 {
     /*
-     * /proc/meminfo
+    /proc/meminfo
     0) MemTotal:         830728 kB
     1) MemFree:           52036 kB
     2) Buffers:            6244 kB
@@ -35,11 +37,7 @@ void DataSourceMemory::gatherData()
     18) SwapFree:         509560 kB
     */
 
-    QFile memfile("/proc/meminfo");
-    if (!memfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Error opening meminfo file";
-        return;
-    }
+    QTextStream memdata(getSystemData(m_memInfo));
 
     QString line;
     int memTotal = 0;
@@ -49,9 +47,14 @@ void DataSourceMemory::gatherData()
     int swapTotal = 0;
     int swapCached = 0;
     int swapFree = 0;
-    for (int i=0;i<19;i++) {
-        line = memfile.readLine();
-        int value = line.split(" ", QString::SkipEmptyParts).at(1).toInt();
+    for (int i=0;i<19 && !memdata.atEnd();i++) {
+        line = memdata.readLine();
+        QStringList values = line.split(" ", QString::SkipEmptyParts);
+        if (values.size() < 2) {
+            qDebug() << "Failed to fetch memory info";
+            return;
+        }
+        int value = values.at(1).toInt();
         switch(i){
         case 0:
             memTotal = value;

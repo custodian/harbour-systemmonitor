@@ -5,21 +5,22 @@
 #include <QVector>
 #include <QString>
 #include "datasource.h"
+#include "systemsnapshot.h"
 
 class DataSourceWlan : public DataSource
 {
     Q_OBJECT
 public:
-    explicit DataSourceWlan(QObject *parent = 0);
+    explicit DataSourceWlan(SystemSnapshot *parent = 0);
 
-    virtual void gatherData();
 signals:
 
 public slots:
+    void processSystemSnapshot();
 
 private:
-    QVector<QString> m_filesRx;
-    QVector<QString> m_filesTx;
+    int m_sourceRx;
+    int m_sourceTx;
 
     QVector<int> m_prevBytesRx;
     QVector<int> m_prevBytesTx;
