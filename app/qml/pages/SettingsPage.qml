@@ -58,6 +58,20 @@ Page {
                 title: qsTr("Settings")
             }
 
+            TextSwitch {
+                checked: sysmon.enabled
+                text: qsTr("Enable service")
+                description: sysmon.enabled ? qsTr("Service is running now") : qsTr("Service is stopped")
+                onClicked: sysmon.setEnabled(checked)
+            }
+
+            TextSwitch {
+                checked: sysmon.autorun
+                text: qsTr("Autorun on system boot")
+                description: sysmon.autorun ? qsTr("Service will autorun on system boot") : qsTr("Service should be launched manually")
+                onClicked: sysmon.setAutorun(checked)
+            }
+
             ComboBox {
                 id: comboBoxUpdateInterval
                 label: qsTr("Update interval")
@@ -97,7 +111,6 @@ Page {
                 height: 1
                 width: parent.width
             }
-
             Row {
                 anchors {
                     left: parent.left
@@ -113,6 +126,11 @@ Page {
                     color: Theme.primaryColor
                 }
             }
+            //Spacer
+            Item {
+                height: 1
+                width: parent.width
+            }
             Row {
                 anchors {
                     left: parent.left
@@ -127,6 +145,11 @@ Page {
                     text: qsTr("%1").arg(databaseUnits);
                     color: Theme.primaryColor
                 }
+            }
+            //Spacer
+            Item {
+                height: 1
+                width: parent.width
             }
             Text {
                 width: parent.width

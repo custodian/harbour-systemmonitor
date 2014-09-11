@@ -1,5 +1,6 @@
 #include "systemmonitor.h"
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusReply>
 
 SystemMonitor::SystemMonitor(QObject *parent) :
     QObject(parent)
@@ -19,6 +20,91 @@ SystemMonitor::SystemMonitor(QObject *parent) :
         "dataUpdated", this, SIGNAL(dataUpdated())
     );
     */
+
+    //systemd connection
+    systemd = new QDBusInterface("org.freedesktop.systemd1",
+                                     "/org/freedesktop/systemd1",
+                                     "org.freedesktop.systemd1.Manager",
+                                     QDBusConnection::sessionBus(), this);
+
+    systemd->call("Subscribe");
+
+    QDBusReply<QDBusObjectPath> unit = systemd->call("LoadUnit", SYSMON_SYSTEMD_UNIT);
+    if (unit.isValid()) {
+        unitPath = unit.value();
+
+        getUnitProperties();
+
+        QDBusConnection::sessionBus().connect(
+                    "org.freedesktop.systemd1", unitPath.path(),
+                    "org.freedesktop.DBus.Properties", "PropertiesChanged",
+                    this, SLOT(onPropertiesChanged(QString,QMap<QString,QVariant>,QStringList)));
+    } else {
+        qWarning() << unit.error().message();
+    }
+}
+
+void SystemMonitor::getUnitProperties()
+{
+    QDBusMessage request = QDBusMessage::createMethodCall(
+                "org.freedesktop.systemd1", unitPath.path(),
+                "org.freedesktop.DBus.Properties", "GetAll");
+    request << "org.freedesktop.systemd1.Unit";
+    QDBusReply<QVariantMap> reply = QDBusConnection::sessionBus().call(request);
+    if (reply.isValid()) {
+        QVariantMap newProperties = reply.value();
+        bool emitAutorunChanged = (unitProperties["UnitFileState"] != newProperties["UnitFileState"]);
+        bool emitEnabledChanged = (unitProperties["ActiveState"] != newProperties["ActiveState"]);
+        unitProperties = newProperties;
+        if (emitAutorunChanged) emit autorunChanged();
+        if (emitEnabledChanged) emit enabledChanged();
+    } else {
+        qWarning() << reply.error().message();
+    }
+}
+
+void SystemMonitor::onPropertiesChanged(QString interface, QMap<QString,QVariant> changed, QStringList invalidated)
+{
+    if (interface != "org.freedesktop.systemd1.Unit") {
+        return;
+    }
+    if (invalidated.contains("UnitFileState") || invalidated.contains("ActiveState")) {
+        getUnitProperties();
+    }
+}
+
+bool SystemMonitor::autorun() const
+{
+    return unitProperties["UnitFileState"].toString() == "enabled";
+}
+
+void SystemMonitor::setAutorun(bool autorun)
+{
+    //QDBusError reply;
+    if (autorun) {
+        systemd->call("EnableUnitFiles", QStringList() << SYSMON_SYSTEMD_UNIT, false, true);
+    } else {
+        systemd->call("DisableUnitFiles", QStringList() << SYSMON_SYSTEMD_UNIT, false);
+    }
+    //if (!reply.isValid()) {
+    //    qWarning() << reply.message();
+    //} else {
+        systemd->call("Reload");
+        getUnitProperties();
+    //}
+}
+
+bool SystemMonitor::enabled() const
+{
+    return unitProperties["ActiveState"].toString() == "active";
+}
+
+void SystemMonitor::setEnabled(bool enabled)
+{
+    QDBusReply<QDBusObjectPath> reply = systemd->call(enabled ? "StartUnit" : "StopUnit", SYSMON_SYSTEMD_UNIT, "replace");
+    if (!reply.isValid()) {
+        qWarning() << reply.error().message();
+    }
 }
 
 void SystemMonitor::updateIntervalChanged(int interval)
