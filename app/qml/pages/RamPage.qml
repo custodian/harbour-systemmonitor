@@ -70,7 +70,7 @@ Page {
                 graphTitle: qsTr("RAM")
                 graphHeight: 200
                 scale: true
-                unitsY: "Mb"
+                axisY.units: "Mb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -83,7 +83,7 @@ Page {
                 graphTitle: qsTr("Swap")
                 graphHeight: 200
                 scale: true
-                unitsY: "Mb"
+                axixY.units: "Mb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

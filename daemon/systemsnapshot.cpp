@@ -1,6 +1,8 @@
 #include "systemsnapshot.h"
 
+#include <QDebug>
 #include <QFile>
+#include <QDir>
 
 SystemSnapshot::SystemSnapshot(QObject *parent) :
     QObject(parent)
@@ -49,6 +51,24 @@ void SystemSnapshot::makeSnapshot()
     }
 
     //Get process pids
+    QDir proc("/proc");
+    QStringList pids = proc.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+    qDebug () << "PIDS" << pids;
 
-    //Get process data
+    QRegExp numbers("[0-9]+");
+    foreach(const QString &pid, pids) {
+        if (!numbers.exactMatch(pid)) {
+            continue;
+        }
+
+        if (!proc.cd(pid)) continue;
+        //get default process data
+        qDebug() << "pid" << pid;
+        proc.cdUp();
+
+        //get registered data
+
+    }
+
+
 }

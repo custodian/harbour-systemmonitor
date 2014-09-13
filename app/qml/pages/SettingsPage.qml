@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
 
 Page {
     id: page
@@ -10,6 +9,8 @@ Page {
 
     Component.onCompleted: {
         updateDatabaseInfo();
+        updateIntervaChanged();
+        archiveLengthChanged();
     }
 
     function updateDatabaseInfo() {
@@ -17,27 +18,28 @@ Page {
         databaseSize = sysmon.getDatabaseSize();
     }
 
-    ConfigurationGroup {
-        id: settings
-        path: "/net/thecust/systemmonitor"
-        property int updateInterval: 60
-        onUpdateIntervalChanged: {
-            for (var i=0;i<timeModel.count;i++) {
-                if (timeModel.get(i).interval == updateInterval) {
-                    comboBoxUpdateInterval.currentIndex = i;
-                    break;
-                }
+    function updateIntervaChanged() {
+        for (var i=0;i<timeModel.count;i++) {
+            if (timeModel.get(i).interval == settings.updateInterval) {
+                comboBoxUpdateInterval.currentIndex = i;
+                break;
             }
         }
-        property int archiveLength: 7
-        onArchiveLengthChanged: {
-            for (var i=0;i<archiveModel.count;i++) {
-                if (archiveModel.get(i).interval == archiveLength) {
-                    comboBoxArchiveLength.currentIndex = i;
-                    break;
-                }
+    }
+
+    function archiveLengthChanged() {
+        for (var i=0;i<archiveModel.count;i++) {
+            if (archiveModel.get(i).interval == settings.archiveLength) {
+                comboBoxArchiveLength.currentIndex = i;
+                break;
             }
         }
+    }
+
+    Connections {
+        target: settings
+        onUpdateIntervalChanged: updateIntervaChanged()
+        onArchiveLengthChanged: archiveLengthChanged()
     }
 
     RemorsePopup { id: remorse }

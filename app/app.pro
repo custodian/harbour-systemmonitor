@@ -26,12 +26,13 @@ OTHER_FILES += \
     qml/pages/CoverPage.qml \
     qml/pages/MainPage.qml \
     qml/pages/CpuPage.qml \
-    qml/pages/MemoryPage.qml \
+    qml/pages/RamPage.qml \
     qml/pages/WlanPage.qml \
     qml/pages/CellPage.qml \
     qml/pages/BatteryPage.qml \
     qml/pages/SettingsPage.qml \
     qml/pages/AboutPage.qml \
+    qml/pages/Axis.qml \
     qml/pages/GraphData.qml \
     qml/sysmon.qml \
     qml/images/* \

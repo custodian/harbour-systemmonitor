@@ -4,12 +4,33 @@ import "pages"
 import net.thecust.sysmon 1.0
 import org.nemomobile.configuration 1.0
 
-//TODO: combine all dconf settings here
-
 ApplicationWindow
 {
     initialPage: Component { MainPage { } }
     cover: Qt.resolvedUrl("pages/CoverPage.qml")
+
+    //TODO: combine all dconf settings here
+    ConfigurationGroup {
+        id: settings
+        path: "/net/thecust/systemmonitor"
+
+        property int deepView: 12
+        property int coverGraphNum: 0
+        property int updateInterval: 120
+        property int archiveLength: 7
+    }
+
+    Component.onCompleted: {
+        console.log("Test", DataSource.CpuTotal);
+    }
+
+    SystemMonitor {
+        id: sysmon
+
+        onDataUpdated: {
+            console.log("SystemMonitor dataUpdated");
+        }
+    }
 
     ListModel {
         id: timeModel
@@ -96,14 +117,6 @@ ApplicationWindow
         ListElement {
             label: "whole period"
             interval: 999
-        }
-    }
-
-    SystemMonitor {
-        id: sysmon
-
-        onDataUpdated: {
-            console.log("SystemMonitor dataUpdated");
         }
     }
 }

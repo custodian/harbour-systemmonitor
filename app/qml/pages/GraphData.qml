@@ -1,32 +1,42 @@
 import QtQuick 2.0
 import QtQml 2.1
 import Sailfish.Silica 1.0
+
 import "."
 
-Column {
+Item {
     id: root
     anchors {
         left: (parent)? parent.left : undefined
         right: (parent)? parent.right : undefined
     }
-    property alias clickEnabled: backgroundArea.enabled
+    height: graphHeight + (doubleAxisXLables ? Theme.itemSizeMedium : Theme.itemSizeSmall)
 
     signal clicked
 
-    //TODO: create Axis object and move all settings to it
-    //property Axis axisX
-    //property Axis axisY
+    property alias clickEnabled: backgroundArea.enabled
     property string graphTitle: ""
-    property string maskY: "%1"
-    property string unitsY: "%"
-    property int gridY: 4
-    property int gridX: 4
+
+    property alias axisX: _axisXobject
+    Axis {
+        id: _axisXobject
+        mask: "hh:mm"
+        grid: 4
+    }
+
+    property alias axisY: _axisYobject
+    Axis {
+        id: _axisYobject
+        mask: "%1"
+        units: "%"
+        grid: 4
+    }
 
     property var valueConverter
 
-    property string maskX: "hh:mm"
     property int graphHeight: 250
     property int graphWidth: canvas.width / canvas.stepX
+    property bool doubleAxisXLables: false
 
     property bool scale: false
     property color lineColor: Theme.highlightColor
@@ -61,6 +71,8 @@ Column {
         if (scale) {
             maxY = pointMaxY * 1.20;
         }
+        doubleAxisXLables = ((maxX - minX) > 129600); // 1,5 days
+
         canvas.requestPaint();
     }
 
@@ -69,188 +81,192 @@ Column {
         if (valueConverter) {
             v = valueConverter(value);
         }
-        return maskY.arg(v);
+        return axisY.mask.arg(v);
     }
 
     function createXLabel(value) {
         var d = new Date(value*1000);
-        return Qt.formatTime(d, maskX);
+        return Qt.formatTime(d, axisX.mask);
     }
 
-    Label {
+    Column {
         anchors {
+            top: parent.top
             left: parent.left
             leftMargin: 3*Theme.paddingLarge
             right: parent.right
             rightMargin: Theme.paddingLarge
         }
-        color: Theme.highlightColor
-        font.pixelSize: Theme.fontSizeSmall
-        text: graphTitle
-        wrapMode: Text.Wrap
 
         Label {
-            id: labelLastValue
-            anchors {
-                right: parent.right
-            }
+            width: parent.width
             color: Theme.highlightColor
             font.pixelSize: Theme.fontSizeSmall
+            text: graphTitle
             wrapMode: Text.Wrap
-            visible: !noData
-        }
-    }
 
-    Rectangle {
-        anchors {
-            left: parent.left
-            leftMargin: 3*Theme.paddingLarge
-            rightMargin: Theme.paddingLarge
-            right: parent.right
-        }
-        height: graphHeight
-        border.color: Theme.secondaryHighlightColor
-        color: "transparent"
-
-        BackgroundItem {
-            id: backgroundArea
-            anchors.fill: parent
-            onClicked: {
-                root.clicked();
+            Label {
+                id: labelLastValue
+                anchors {
+                    right: parent.right
+                }
+                color: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeSmall
+                wrapMode: Text.Wrap
+                visible: !noData
             }
         }
 
-        Repeater {
-            model: noData ? 0 : (gridY + 1)
-            delegate: Label {
-                color: Theme.primaryColor
-                font.pixelSize: Theme.fontSizeLarge / 2
-                text: createYLabel( (maxY-minY)/gridY * index + minY)
-                anchors {
-                    top: (index == gridY) ? parent.top : undefined
-                    bottom: (index == gridY) ? undefined : parent.bottom
-                    bottomMargin: (index) ? parent.height / gridY * index - height/2 : 0
-                    right: parent.left
-                    rightMargin: Theme.paddingSmall
+        Rectangle {
+            width: parent.width
+            height: graphHeight
+            border.color: Theme.secondaryHighlightColor
+            color: "transparent"
+
+            BackgroundItem {
+                id: backgroundArea
+                anchors.fill: parent
+                onClicked: {
+                    root.clicked();
                 }
             }
-        }
 
-        Repeater {
-            model: noData ? 0 : (gridX + 1)
-            delegate: Label {
-                color: Theme.primaryColor
-                font.pixelSize: Theme.fontSizeLarge / 2
-                text: createXLabel( (maxX-minX)/gridX * index + minX )
-                anchors {
-                    top: parent.bottom
-                    topMargin: Theme.paddingSmall
-                    left: (index == gridX) ? undefined : parent.left
-                    right: (index == gridX) ? parent.right : undefined
-                    leftMargin: (index) ? (parent.width / gridX * index - width/2): 0
+            Repeater {
+                model: noData ? 0 : (axisY.grid + 1)
+                delegate: Label {
+                    color: Theme.primaryColor
+                    font.pixelSize: Theme.fontSizeLarge / 2
+                    text: createYLabel( (maxY-minY)/axisY.grid * index + minY)
+                    anchors {
+                        top: (index == axisY.grid) ? parent.top : undefined
+                        bottom: (index == axisY.grid) ? undefined : parent.bottom
+                        bottomMargin: (index) ? parent.height / axisY.grid * index - height/2 : 0
+                        right: parent.left
+                        rightMargin: Theme.paddingSmall
+                    }
                 }
             }
-        }
 
-        Label {
-            color: Theme.primaryColor
-            font.pixelSize: Theme.fontSizeLarge / 2
-            text: unitsY
-            anchors {
-                top: parent.top
-                left: parent.left
-                leftMargin: Theme.paddingSmall
+            Repeater {
+                model: noData ? 0 : (axisX.grid + 1)
+                delegate: Label {
+                    color: Theme.primaryColor
+                    font.pixelSize: Theme.fontSizeLarge / 2
+                    text: createXLabel( (maxX-minX)/axisX.grid * index + minX )
+                    anchors {
+                        top: parent.bottom
+                        topMargin: Theme.paddingSmall
+                        left: (index == axisX.grid) ? undefined : parent.left
+                        right: (index == axisX.grid) ? parent.right : undefined
+                        leftMargin: (index) ? (parent.width / axisX.grid * index - width/2): 0
+                    }
+                    Label {
+                        color: Theme.primaryColor
+                        font.pixelSize: Theme.fontSizeLarge / 2
+                        anchors {
+                            top: parent.bottom
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        text: Qt.formatDate(new Date( ((maxX-minX)/axisX.grid * index + minX) * 1000), "ddd");
+                        visible: doubleAxisXLables
+                    }
+                }
             }
-            visible: !noData
-        }
 
-        Canvas {
-            id: canvas
-            anchors {
-                fill: parent
-                //leftMargin: Theme.paddingSmall
-                //rightMargin: Theme.paddingSmall
+            Label {
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeLarge / 2
+                text: axisY.units
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    leftMargin: Theme.paddingSmall
+                }
+                visible: !noData
             }
 
-            //renderTarget: Canvas.FramebufferObject
-            //renderStrategy: Canvas.Threaded
+            Canvas {
+                id: canvas
+                anchors {
+                    fill: parent
+                    //leftMargin: Theme.paddingSmall
+                    //rightMargin: Theme.paddingSmall
+                }
 
-            property real stepX: lineWidth
-            property real stepY: (maxY-minY)/(height-2)
+                //renderTarget: Canvas.FramebufferObject
+                //renderStrategy: Canvas.Threaded
 
-            function drawGrid(ctx) {
-                ctx.save();
+                property real stepX: lineWidth
+                property real stepY: (maxY-minY)/(height-2)
 
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = lineColor;
-                ctx.globalAlpha = 0.4;
-                //i=0 and i=gridY skipped, top/bottom line
-                for (var i=1;i<gridY;i++) {
+                function drawGrid(ctx) {
+                    ctx.save();
+
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = lineColor;
+                    ctx.globalAlpha = 0.4;
+                    //i=0 and i=axisY.grid skipped, top/bottom line
+                    for (var i=1;i<axisY.grid;i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, height/axisY.grid * i);
+                        ctx.lineTo(width, height/axisY.grid * i);
+                        ctx.stroke();
+                    }
+
+                    ctx.restore();
+                }
+
+                //TODO: allow multiple lines to be drawn
+                function drawPoints(ctx, points) {
+                }
+
+                onPaint: {
+                    var ctx = canvas.getContext("2d");
+                    ctx.globalCompositeOperation = "source-over";
+                    ctx.clearRect(0,0,width,height);
+
+                    //console.log("maxY", maxY, "minY", minY, "height", height, "StepY", stepY);
+
+                    var end = points.length;
+
+                    if (end > 0) {
+                        drawGrid(ctx);
+                    }
+
+                    ctx.save()
+                    ctx.strokeStyle = lineColor;
+                    //ctx.globalAlpha = 0.8;
+                    ctx.lineWidth = lineWidth;
                     ctx.beginPath();
-                    ctx.moveTo(0, height/gridY * i);
-                    ctx.lineTo(width, height/gridY * i);
+                    var x = -stepX;
+                    for (var i = 0; i < end; i++) {
+                        var y = height - Math.floor(points[i].y / stepY) - 1;
+                        if (i == 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                        x+=stepX; //point[i].x can be used for grid title
+                    }
                     ctx.stroke();
-                }
+                    ctx.restore();
 
-                ctx.restore();
-            }
-
-            function drawPoints(ctx, points) {
-
-            }
-
-            onPaint: {
-                var ctx = canvas.getContext("2d");
-                ctx.globalCompositeOperation = "source-over";
-                ctx.clearRect(0,0,width,height);
-
-                //console.log("maxY", maxY, "minY", minY, "height", height, "StepY", stepY);
-
-                var end = points.length;
-
-                if (end > 0) {
-                    drawGrid(ctx);
-                }
-
-                ctx.save()
-                ctx.strokeStyle = lineColor;
-                //ctx.globalAlpha = 0.8;
-                ctx.lineWidth = lineWidth;
-                ctx.beginPath();
-                var x = -stepX;
-                for (var i = 0; i < end; i++) {
-                    var y = height - Math.floor(points[i].y / stepY) - 1;
-                    if (i == 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                    x+=stepX; //point[i].x can be used for grid title
-                }
-                ctx.stroke();
-                ctx.restore();
-
-                if (end > 0) {
-                    var lastValue = points[end-1].y;
-                    if (lastValue) {
-                        labelLastValue.text = root.createYLabel(lastValue)+root.unitsY;
+                    if (end > 0) {
+                        var lastValue = points[end-1].y;
+                        if (lastValue) {
+                            labelLastValue.text = root.createYLabel(lastValue)+root.axisY.units;
+                        }
                     }
                 }
             }
-        }
 
-        Text {
-            id: textNoData
-            anchors.centerIn: parent
-            color: lineColor
-            text: qsTr("No data");
-            visible: noData
+            Text {
+                id: textNoData
+                anchors.centerIn: parent
+                color: lineColor
+                text: qsTr("No data");
+                visible: noData
+            }
         }
-    }
-
-    //Just for bottom offset for axis label
-    Item {
-        height: Theme.fontSizeSmall
-        width: parent.width
     }
 }

@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
 
 Page {
     id: page
@@ -70,7 +69,7 @@ Page {
                 graphTitle: qsTr("Received data")
                 graphHeight: 200
                 scale: true
-                unitsY: "Kb"
+                axisY.units: "Kb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -83,7 +82,7 @@ Page {
                 graphTitle: qsTr("Transmitted data")
                 graphHeight: 200
                 scale: true
-                unitsY: "Kb"
+                axisY.units: "Kb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
 
 CoverBackground {
     id: cover
@@ -11,13 +10,6 @@ CoverBackground {
     property bool active: status == Cover.Active
     onActiveChanged: {
         updateGraph();
-    }
-
-    ConfigurationGroup {
-        id: settings
-        path: "/net/thecust/systemmonitor"
-
-        property int coverGraphNum: 0
     }
 
     function nextGraph() {
@@ -92,7 +84,7 @@ CoverBackground {
         GraphData {
             graphTitle: qsTr("CPU")
             graphHeight: coverGraphHeight
-            gridX: 1
+            axisX.grid: 1
             minY: 0
             maxY: 100
             valueConverter: function(value) {
@@ -111,9 +103,9 @@ CoverBackground {
         GraphData {
             graphTitle: qsTr("NET")
             graphHeight: coverGraphHeight
-            gridX: 1
             scale: true
-            unitsY: "Kb"
+            axisX.grid: 1
+            axisY.units: "Kb"
             valueConverter: function(value) {
                 return (value/1000).toFixed(0);
             }
@@ -131,9 +123,9 @@ CoverBackground {
         GraphData {
             graphTitle: qsTr("RAM")
             graphHeight: coverGraphHeight
-            gridX: 1
             scale: true
-            unitsY: "Mb"
+            axisX.grid: 1
+            axisY.units: "Mb"
             valueConverter: function(value) {
                 return (value/1000).toFixed(0);
             }
@@ -151,7 +143,7 @@ CoverBackground {
         GraphData {
             graphTitle: qsTr("BAT")
             graphHeight: coverGraphHeight
-            gridX: 1
+            axisX.grid: 1
             minY: 0
             maxY: 100
             valueConverter: function(value) {

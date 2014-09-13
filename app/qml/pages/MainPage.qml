@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
 
 Page {
     id: page
@@ -11,27 +10,16 @@ Page {
     }
     property bool needUpdate: true
 
-    ConfigurationGroup {
-        id: settings
-        path: "/net/thecust/systemmonitor"
-
-        property int deepView: 12
-        onDeepViewChanged: {
-            for (var i=0;i<depthModel.count;i++) {
-                if (depthModel.get(i).interval == deepView) {
-                    comboBoxDepthView.currentIndex = i;
-                    break;
-                }
+    function deepViewChanged() {
+        for (var i=0;i<depthModel.count;i++) {
+            if (depthModel.get(i).interval == settings.deepView) {
+                comboBoxDepthView.currentIndex = i;
+                break;
             }
-            needUpdate = true;
-            updateGraph()
         }
+        needUpdate = true;
+        updateGraph()
     }
-
-    Component.onCompleted: {
-        settings.deepViewChanged();
-    }
-
 
     function updateGraph() {
         if (page.active && needUpdate) {
@@ -42,6 +30,15 @@ Page {
                 graphCellTotal.setPoints(sysmon.cellTotal(settings.deepView, graphCellTotal.graphWidth));
                 needUpdate = false;
         }
+    }
+
+    Component.onCompleted: {
+        deepViewChanged();
+    }
+
+    Connections {
+        target: settings
+        onDeepViewChanged: deepViewChanged()
     }
 
     Connections {
@@ -74,7 +71,7 @@ Page {
             id: column
 
             width: page.width
-            spacing: Theme.paddingLarge
+            //spacing: Theme.paddingLarge
             PageHeader {
                 title: qsTr("System monitor")
             }
@@ -126,7 +123,7 @@ Page {
                 graphTitle: qsTr("RAM usage")
                 graphHeight: 200
                 scale: true
-                unitsY: "Mb"
+                axisY.units: "Mb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0)
                 }
@@ -139,7 +136,7 @@ Page {
                 graphTitle: qsTr("Wlan traffic")
                 graphHeight: 200
                 scale: true
-                unitsY: "Kb"
+                axisY.units: "Kb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -152,7 +149,7 @@ Page {
                 graphTitle: qsTr("Cell traffic")
                 graphHeight: 200
                 scale: true
-                unitsY: "Kb"
+                axisY.units: "Kb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
