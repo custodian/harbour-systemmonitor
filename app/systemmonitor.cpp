@@ -5,7 +5,6 @@
 SystemMonitor::SystemMonitor(QObject *parent) :
     QObject(parent)
 {
-    qRegisterMetaType< QList<DataSource::Type> >("QList<DataSource::Type>");
     connect(&m_settings, SIGNAL(updateIntervalChanged(int)), SLOT(updateIntervalChanged(int)));
 
     //Timer instead of dbus connection

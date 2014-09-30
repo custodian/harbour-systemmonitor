@@ -8,6 +8,11 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Tue Sep 30 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.6-18
+- Android battery support
+- Graph ui fixes
+- Total values for network data
+
 * Thu Sep 11 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.5-15
 - Service control and startup settings
 - Snapshot system
