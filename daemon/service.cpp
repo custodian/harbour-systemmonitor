@@ -34,8 +34,8 @@ void Service::initDataSources()
     foreach(const DataSource* source, m_sources) {
         connect(source, SIGNAL(systemDataGathered(DataSource::Type,float))
                 , SLOT(systemDataGathered(DataSource::Type,float)));
-        connect(source, SIGNAL(applicationDataGathered(ApplicationInfo*,DataSource::Type,float))
-                , SLOT(applicationDataGathered(ApplicationInfo*,DataSource::Type,float)));
+        connect(source, SIGNAL(applicationDataGathered(int,DataSource::Type,float))
+                , SLOT(applicationDataGathered(int,DataSource::Type,float)));
     }
 }
 
@@ -72,12 +72,23 @@ void Service::gatherData()
 
 void Service::commitGatheredData()
 {
-    auto it = m_gatheredSystemData.begin();
-    while(it != m_gatheredSystemData.end()) {
-        m_storage.saveSystemData(m_snapshotTime, it->first, it->second);
-        it++;
+    {
+        auto it = m_gatheredSystemData.begin();
+        while(it != m_gatheredSystemData.end()) {
+            m_storage.saveSystemData(m_snapshotTime, it->first, it->second);
+            it++;
+        }
+        m_gatheredSystemData.clear();
     }
-    m_gatheredSystemData.clear();
+    {
+        auto it = m_gatheredAppData.begin();
+        while(it != m_gatheredAppData.end()) {
+            auto it2 = it.value().begin();
+            while(it2 != it.value().end()) {
+                m_storage.saveAppData(it.key(), m_snapshotTime, it2->first, it2->second);
+            }
+        }
+    }
 }
 
 void Service::removeObsoleteData() {
@@ -90,9 +101,10 @@ void Service::systemDataGathered(DataSource::Type type, float value) {
     m_gatheredSystemData.append(qMakePair(type, value));
 }
 
-void Service::applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value)
+void Service::applicationDataGathered(int appid, DataSource::Type type, float value)
 {
     //TODO: app detection via kernel module or netlink connector
     //http://stackoverflow.com/questions/6075013/linux-detect-launching-of-programs
     //TODO: m_storage.saveApplicationData(appInfo, type, value);
+    m_gatheredAppData[appid].append(qMakePair(type, value));
 }

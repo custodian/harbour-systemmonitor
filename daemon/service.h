@@ -13,6 +13,8 @@
 
 #include "keepalive/backgroundactivity.h"
 
+typedef QList<QPair<DataSource::Type, float> > GatheredData;
+
 class Service : public SystemSnapshot
 {
     Q_OBJECT
@@ -24,7 +26,7 @@ signals:
 
 public slots:
     void systemDataGathered(DataSource::Type type, float value);
-    void applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value);
+    void applicationDataGathered(int appid, DataSource::Type type, float value);
     void updateIntervalChanged(int interval);
 
 private slots:
@@ -39,7 +41,8 @@ private:
     Settings *m_settings;
     QList<DataSource*> m_sources;
 
-    QList<QPair<DataSource::Type, float> > m_gatheredSystemData;
+    GatheredData m_gatheredSystemData;
+    QHash<int, GatheredData> m_gatheredAppData;
 
     BackgroundActivity *m_background;
     Storage m_storage;

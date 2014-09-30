@@ -15,7 +15,7 @@ class DataSource:
     public QObject
 {
     Q_OBJECT
-    Q_ENUMS(DataType)
+    Q_ENUMS(Type)
 public:
     enum Type {
         CpuTotal = 100,
@@ -37,7 +37,7 @@ public:
 
 signals:
     void systemDataGathered(DataSource::Type type, float value);
-    void applicationDataGathered(ApplicationInfo *appInfo, DataSource::Type type, float value);
+    void applicationDataGathered(int appid, DataSource::Type type, float value);
 
 protected:
     int registerSystemSource(const QString &source);

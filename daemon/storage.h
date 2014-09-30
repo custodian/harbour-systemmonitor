@@ -21,6 +21,7 @@ signals:
 
 public slots:
     void saveSystemData(const QDateTime &time, DataSource::Type type, float value);
+    void saveAppData(int appid, const QDateTime &time, DataSource::Type type, float value);
     void removeObsoleteData(const QDateTime &time);
 
 private:

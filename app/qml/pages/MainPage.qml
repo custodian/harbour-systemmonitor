@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import net.thecust.sysmon 1.0
 
 Page {
     id: page
@@ -23,12 +24,12 @@ Page {
 
     function updateGraph() {
         if (page.active && needUpdate) {
-                graphBattery.setPoints(sysmon.batteryCharge(settings.deepView, graphBattery.graphWidth));
-                graphCpu.setPoints(sysmon.cpuTotal(settings.deepView, graphCpu.graphWidth));
-                graphRam.setPoints(sysmon.ramUsed(settings.deepView, graphRam.graphWidth))                ;
-                graphWlanTotal.setPoints(sysmon.wlanTotal(settings.deepView, graphWlanTotal.graphWidth));
-                graphCellTotal.setPoints(sysmon.cellTotal(settings.deepView, graphCellTotal.graphWidth));
-                needUpdate = false;
+            graphBattery.updateGraph();
+            graphCpu.updateGraph();
+            graphRam.updateGraph();
+            graphWlanTotal.updateGraph();
+            graphCellTotal.updateGraph();
+            needUpdate = false;
         }
     }
 
@@ -92,10 +93,12 @@ Page {
                 }
             }
 
-            GraphData {
+            SysMonGraph {
                 id: graphBattery
                 graphTitle: qsTr("Battery charge")
                 graphHeight: 200
+                dataType: [DataSource.BatteryPercentage]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -105,10 +108,12 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("BatteryPage.qml"), {deepView: settings.deepView})
             }
 
-            GraphData {
+            SysMonGraph {
                 id: graphCpu
                 graphTitle: qsTr("CPU usage")
                 graphHeight: 200
+                dataType: [DataSource.CpuTotal]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -118,10 +123,12 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("CpuPage.qml"), {deepView: settings.deepView})
             }
 
-            GraphData {
+            SysMonGraph {
                 id: graphRam
                 graphTitle: qsTr("RAM usage")
                 graphHeight: 200
+                dataType: [DataSource.RAMUsed]
+                dataAvg: true
                 scale: true
                 axisY.units: "Mb"
                 valueConverter: function(value) {
@@ -131,12 +138,14 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("RamPage.qml"), {deepView: settings.deepView})
             }
 
-            GraphData {
+            SysMonGraph {
                 id: graphWlanTotal
                 graphTitle: qsTr("Wlan traffic")
                 graphHeight: 200
+                dataType: [DataSource.NetworkWlanRx, DataSource.NetworkWlanTx]
                 scale: true
                 axisY.units: "Kb"
+                valueTotal: true
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -144,12 +153,14 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("WlanPage.qml"), {deepView: settings.deepView})
             }
 
-            GraphData {
+            SysMonGraph {
                 id: graphCellTotal
                 graphTitle: qsTr("Cell traffic")
                 graphHeight: 200
+                dataType: [DataSource.NetworkCellRx, DataSource.NetworkCellTx]
                 scale: true
                 axisY.units: "Kb"
+                valueTotal: true
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

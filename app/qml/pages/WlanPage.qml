@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import net.thecust.sysmon 1.0
 
 Page {
     id: page
@@ -16,8 +17,8 @@ Page {
     }
 
     function updateGraph() {
-        wlanRx.setPoints(sysmon.wlanRx(deepView, wlanRx.graphWidth));
-        wlanTx.setPoints(sysmon.wlanTx(deepView, wlanTx.graphWidth));
+        wlanRx.updateGraph();
+        wlanTx.updateGraph();
     }
 
     Connections {
@@ -64,12 +65,14 @@ Page {
                 }
             }
 
-            GraphData {
+            SysMonGraph {
                 id: wlanRx
                 graphTitle: qsTr("Received data")
                 graphHeight: 200
+                dataType: [DataSource.NetworkWlanRx]
                 scale: true
                 axisY.units: "Kb"
+                valueTotal: true
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -77,12 +80,14 @@ Page {
                 clickEnabled: false
             }
 
-            GraphData {
+            SysMonGraph {
                 id: wlanTx
                 graphTitle: qsTr("Transmitted data")
                 graphHeight: 200
+                dataType: [DataSource.NetworkWlanTx]
                 scale: true
                 axisY.units: "Kb"
+                valueTotal: true
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

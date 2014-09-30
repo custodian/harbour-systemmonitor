@@ -21,7 +21,7 @@ ApplicationWindow
     }
 
     Component.onCompleted: {
-        console.log("Test", DataSource.CpuTotal);
+        //console.log("Test", DataSource.CpuTotal);
     }
 
     SystemMonitor {
@@ -30,6 +30,15 @@ ApplicationWindow
         onDataUpdated: {
             console.log("SystemMonitor dataUpdated");
         }
+
+        /*
+        onDataLoaded: {
+            callback = data.callback;
+            if (callback) {
+                callback();
+            }
+        }
+        */
     }
 
     ListModel {

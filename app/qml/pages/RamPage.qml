@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
+import net.thecust.sysmon 1.0
 
 Page {
     id: page
@@ -17,8 +17,8 @@ Page {
     }
 
     function updateGraph() {
-        ramUsed.setPoints(sysmon.ramUsed(deepView, ramUsed.graphWidth));
-        swapUsed.setPoints(sysmon.swapUsed(deepView, swapUsed.graphWidth));
+        ramUsed.updateGraph();
+        swapUsed.updateGraph();
     }
 
     Connections {
@@ -65,10 +65,12 @@ Page {
                 }
             }
 
-            GraphData {
+            SysMonGraph {
                 id: ramUsed
                 graphTitle: qsTr("RAM")
                 graphHeight: 200
+                dataType: [DataSource.RAMUsed]
+                dataAvg: true
                 scale: true
                 axisY.units: "Mb"
                 valueConverter: function(value) {
@@ -78,12 +80,14 @@ Page {
                 clickEnabled: false
             }
 
-            GraphData {
+            SysMonGraph {
                 id: swapUsed
                 graphTitle: qsTr("Swap")
                 graphHeight: 200
+                dataType: [DataSource.SwapUsed]
+                dataAvg: true
                 scale: true
-                axixY.units: "Mb"
+                axisY.units: "Mb"
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

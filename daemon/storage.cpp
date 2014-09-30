@@ -16,14 +16,34 @@ Storage::Storage(QObject *parent) :
     m_db.open();
     if (m_db.isOpen()) {
         m_db.transaction();
-        if (!m_db.tables().contains("data")) {
+        QStringList tables = m_db.tables();
+        if (!tables.contains("data")) {
             m_db.exec("CREATE TABLE data ( "
-                          "time INTEGER NOT NULL, "
-                          "type INTEGER NOT NULL, "
-                          "value REAL NOT NULL,  "
-                          "PRIMARY KEY(time ASC, type ASC) "
-            ")");
+                      "time INTEGER NOT NULL, "
+                      "type INTEGER NOT NULL, "
+                      "value REAL NOT NULL,  "
+                      "PRIMARY KEY(time ASC, type ASC) "
+                      ")");
         }
+//        if (!tables.contains("apps")) {
+//            m_db.exec("CREATE TABLE apps ("
+//                      "id INTEGER NOT NULL, "
+//                      "exe TEXT, "
+//                      "comm TEXT, "
+//                      "name TEXT, "
+//                      "PRIMARY KEY(id ASC) "
+//                      ")");
+//        }
+//        if (!tables.contains("appdata")) {
+//            m_db.exec("CREATE TABLE appdata ("
+//                      "appid INTEGER NOT NULL, "
+//                      "time INTEGER NOT NULL, "
+//                      "type INTEGER NOT NULL, "
+//                      "value REAL NOT NULL,  "
+//                      "PRIMARY KEY(appid ASC, time ASC, type ASC) "
+//                      ")");
+
+//        }
         m_db.commit();
     } else {
         qDebug() << "Failed to open database";
@@ -44,6 +64,11 @@ qint64 Storage::getUnitsCollected()
             count = query.value("cnt").toInt();
         }
     }
+    if (query.exec("SELECT count(*) as cnt FROM appdata")) {
+        if (query.next()) {
+            count += query.value("cnt").toInt();
+        }
+    }
     return count;
 }
 
@@ -51,6 +76,7 @@ void Storage::clearData()
 {
     QSqlQuery query(m_db);
     query.exec("DELETE FROM data");
+    query.exec("DELETE FROM appdata");
 }
 
 QVector<QVariantMap> Storage::getSystemData(const QList<DataSource::Type> &types, const QDateTime &from, const QDateTime &to)
@@ -105,4 +131,19 @@ void Storage::saveSystemData(const QDateTime &time, DataSource::Type type, float
     query.bindValue(":value", value);
     //qDebug () << "Saving data" <<
     query.exec();
+}
+
+void Storage::saveAppData(int appid, const QDateTime &time, DataSource::Type type, float value)
+{
+    //TODO: use execBatch & transaction ??
+/*
+    QSqlQuery query(m_db);
+    query.prepare("INSERT INTO appdata(appid, time, type, value) VALUES(:appid, :time, :type, :value)");
+    query.bindValue(":appid", appid);
+    query.bindValue(":time", time);
+    query.bindValue(":type", type);
+    query.bindValue(":value", value);
+    //qDebug () << "Saving app data" <<
+    query.exec();
+*/
 }

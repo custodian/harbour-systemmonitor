@@ -50,7 +50,8 @@ void SystemSnapshot::makeSnapshot()
         }
     }
 
-    //Get process pids
+    //TODO: Get process pids
+    /*
     QDir proc("/proc");
     QStringList pids = proc.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
     qDebug () << "PIDS" << pids;
@@ -64,11 +65,11 @@ void SystemSnapshot::makeSnapshot()
         if (!proc.cd(pid)) continue;
         //get default process data
         qDebug() << "pid" << pid;
-        proc.cdUp();
+
 
         //get registered data
 
+        proc.cdUp();
     }
-
-
+    */
 }

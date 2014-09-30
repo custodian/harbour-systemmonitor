@@ -5,6 +5,7 @@
 SystemMonitor::SystemMonitor(QObject *parent) :
     QObject(parent)
 {
+    qRegisterMetaType< QList<DataSource::Type> >("QList<DataSource::Type>");
     connect(&m_settings, SIGNAL(updateIntervalChanged(int)), SLOT(updateIntervalChanged(int)));
 
     //Timer instead of dbus connection
@@ -128,6 +129,15 @@ void SystemMonitor::clearData()
     emit dataUpdated();
 }
 
+QVariant SystemMonitor::getSystemGraph(QVariantList types, int depth, int width, bool avg)
+{
+    QList<DataSource::Type> dtypes;
+    foreach (const QVariant& type, types) {
+        dtypes.append(DataSource::Type(type.toInt()));
+    }
+    return getSystemData(dtypes, depth, width, avg);
+}
+
 QVariant SystemMonitor::getSystemData(DataSource::Type type, int depth, int width, bool avg)
 {
     QList<DataSource::Type> types;
@@ -194,85 +204,4 @@ QList<QVariant> SystemMonitor::filterData(const QVector<QVariantMap>& data, cons
     //qDebug() << "filtered minX" << points.front().toMap()["x"].toInt();
     //qDebug() << "filtered maxX" << points.back().toMap()["x"].toInt();
     return points;
-}
-
-QVariant SystemMonitor::cpuTotal(int depth, int width)
-{
-    return getSystemData(DataSource::CpuTotal, depth, width, true);
-}
-
-QVariant SystemMonitor::cpuUser(int depth, int width)
-{
-    return getSystemData(DataSource::CpuUser, depth, width, true);
-}
-
-QVariant SystemMonitor::cpuSystem(int depth, int width)
-{
-    return getSystemData(DataSource::CpuSystem, depth, width, true);
-}
-
-QVariant SystemMonitor::cpuIO(int depth, int width)
-{
-    return getSystemData(DataSource::CpuIO, depth, width, true);
-}
-
-QVariant SystemMonitor::ramUsed(int depth, int width)
-{
-    return getSystemData(DataSource::RAMUsed, depth, width, true);
-}
-
-QVariant SystemMonitor::swapUsed(int depth, int width)
-{
-    return getSystemData(DataSource::SwapUsed, depth, width, true);
-}
-
-QVariant SystemMonitor::batteryCharge(int depth, int width)
-{
-    return getSystemData(DataSource::BatteryPercentage, depth, width, true);
-}
-
-QVariant SystemMonitor::wlanRx(int depth, int width)
-{
-    return getSystemData(DataSource::NetworkWlanRx, depth, width, false);
-}
-
-QVariant SystemMonitor::wlanTx(int depth, int width)
-{
-    return getSystemData(DataSource::NetworkWlanTx, depth, width, false);
-}
-
-QVariant SystemMonitor::wlanTotal(int depth, int width)
-{
-    QList<DataSource::Type> types;
-    types.append(DataSource::NetworkWlanRx);
-    types.append(DataSource::NetworkWlanTx);
-    return getSystemData(types, depth, width, false);
-}
-
-QVariant SystemMonitor::cellRx(int depth, int width)
-{
-    return getSystemData(DataSource::NetworkCellRx, depth, width, false);
-}
-
-QVariant SystemMonitor::cellTx(int depth, int width)
-{
-    return getSystemData(DataSource::NetworkCellTx, depth, width, false);
-}
-
-QVariant SystemMonitor::cellTotal(int depth, int width)
-{
-    QList<DataSource::Type> types;
-    types.append(DataSource::NetworkCellRx);
-    types.append(DataSource::NetworkCellTx);
-    return getSystemData(types, depth, width, false);
-}
-
-QVariant SystemMonitor::networkTotal(int depth, int width)
-{
-    QList<DataSource::Type> types;
-    types.append(DataSource::NetworkWlanRx);
-    types.append(DataSource::NetworkWlanTx);
-    types.append(DataSource::NetworkCellRx);
-    types.append(DataSource::NetworkCellTx);
-    return getSystemData(types, depth, width, false);
 }

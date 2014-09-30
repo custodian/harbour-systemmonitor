@@ -39,25 +39,7 @@ public slots:
     QVariant getDatabaseSize();
     QVariant getUnitsCollected();
 
-    QVariant cpuTotal(int depth, int width);
-    QVariant cpuUser(int depth, int width);
-    QVariant cpuSystem(int depth, int width);
-    QVariant cpuIO(int depth, int width);
-
-    QVariant ramUsed(int depth, int width);
-    QVariant swapUsed(int depth, int width);
-
-    QVariant batteryCharge(int depth, int width);
-
-    QVariant wlanRx(int depth, int width);
-    QVariant wlanTx(int depth, int width);
-    QVariant wlanTotal(int depth, int width);
-
-    QVariant cellRx(int depth, int width);
-    QVariant cellTx(int depth, int width);
-    QVariant cellTotal(int depth, int width);
-
-    QVariant networkTotal(int depth, int width);
+    QVariant getSystemGraph(QVariantList types, int depth, int width, bool avg);
 
 private slots:
     void getUnitProperties();
@@ -66,6 +48,7 @@ private slots:
 private:
     QVariant getSystemData(DataSource::Type type, int depth, int width, bool avg);
     QVariant getSystemData(const QList<DataSource::Type> &types, int depth, int width, bool avg);
+
     QList<QVariant> filterData(const QVector<QVariantMap>& data, const QDateTime &from, const QDateTime &to, int width, bool avg);
 
     QDBusInterface *systemd;

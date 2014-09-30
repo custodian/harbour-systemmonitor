@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import net.thecust.sysmon 1.0
 
 CoverBackground {
     id: cover
@@ -81,9 +82,12 @@ CoverBackground {
     Component {
         id: cpuGraph
 
-        GraphData {
+        SysMonGraph {
             graphTitle: qsTr("CPU")
             graphHeight: coverGraphHeight
+            dataType: [DataSource.CpuTotal]
+            dataDepth: 1
+            dataAvg: true
             axisX.grid: 1
             minY: 0
             maxY: 100
@@ -91,18 +95,20 @@ CoverBackground {
                 return value.toFixed(1);
             }
             clickEnabled: false
-
-            function updateGraph() {
-                setPoints(sysmon.cpuTotal(1, graphWidth));
-            }
         }
     }
 
     Component {
         id: networkGraph
-        GraphData {
+
+        SysMonGraph {
             graphTitle: qsTr("NET")
             graphHeight: coverGraphHeight
+            dataType: [DataSource.NetworkCellRx,
+                DataSource.NetworkCellTx,
+                DataSource.NetworkWlanRx,
+                DataSource.NetworkWlanTx]
+            dataDepth: 1
             scale: true
             axisX.grid: 1
             axisY.units: "Kb"
@@ -110,19 +116,18 @@ CoverBackground {
                 return (value/1000).toFixed(0);
             }
             clickEnabled: false
-
-            function updateGraph() {
-                setPoints(sysmon.networkTotal(1, graphWidth));
-            }
         }
     }
 
     Component {
         id: ramGraph
 
-        GraphData {
+        SysMonGraph {
             graphTitle: qsTr("RAM")
             graphHeight: coverGraphHeight
+            dataType: [DataSource.RAMUsed]
+            dataDepth: 1
+            dataAvg: true
             scale: true
             axisX.grid: 1
             axisY.units: "Mb"
@@ -130,19 +135,18 @@ CoverBackground {
                 return (value/1000).toFixed(0);
             }
             clickEnabled: false
-
-            function updateGraph() {
-                setPoints(sysmon.ramUsed(1, graphWidth));
-            }
         }
     }
 
     Component {
         id: batteryGraph
 
-        GraphData {
+        SysMonGraph {
             graphTitle: qsTr("BAT")
             graphHeight: coverGraphHeight
+            dataType: [DataSource.BatteryPercentage]
+            dataDepth: 1
+            dataAvg: true
             axisX.grid: 1
             minY: 0
             maxY: 100
@@ -151,10 +155,6 @@ CoverBackground {
             }
 
             clickEnabled: false
-
-            function updateGraph() {
-                setPoints(sysmon.batteryCharge(1, graphWidth));
-            }
         }
     }
 }

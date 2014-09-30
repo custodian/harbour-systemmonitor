@@ -34,6 +34,7 @@ OTHER_FILES += \
     qml/pages/AboutPage.qml \
     qml/pages/Axis.qml \
     qml/pages/GraphData.qml \
+    qml/pages/SysMonGraph.qml \
     qml/sysmon.qml \
     qml/images/* \
     harbour-systemmonitor.desktop \

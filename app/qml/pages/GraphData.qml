@@ -33,6 +33,7 @@ Item {
     }
 
     property var valueConverter
+    property bool valueTotal: false
 
     property int graphHeight: 250
     property int graphWidth: canvas.width / canvas.stepX
@@ -239,7 +240,9 @@ Item {
                     ctx.lineWidth = lineWidth;
                     ctx.beginPath();
                     var x = -stepX;
+                    var valueSum = 0;
                     for (var i = 0; i < end; i++) {
+                        valueSum += points[i].y;
                         var y = height - Math.floor(points[i].y / stepY) - 1;
                         if (i == 0) {
                             ctx.moveTo(x, y);
@@ -252,7 +255,10 @@ Item {
                     ctx.restore();
 
                     if (end > 0) {
-                        var lastValue = points[end-1].y;
+                        var lastValue = valueSum;
+                        if (!root.valueTotal) {
+                            lastValue = points[end-1].y;
+                        }
                         if (lastValue) {
                             labelLastValue.text = root.createYLabel(lastValue)+root.axisY.units;
                         }

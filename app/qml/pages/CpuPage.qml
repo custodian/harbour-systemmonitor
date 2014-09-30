@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import net.thecust.sysmon 1.0
 
 Page {
     id: page
@@ -16,10 +17,10 @@ Page {
     }
 
     function updateGraph() {
-        cpuTotal.setPoints(sysmon.cpuTotal(deepView, cpuTotal.graphWidth));
-        cpuUser.setPoints(sysmon.cpuUser(deepView, cpuUser.graphWidth));
-        cpuSystem.setPoints(sysmon.cpuSystem(deepView, cpuSystem.graphWidth));
-        cpuIO.setPoints(sysmon.cpuIO(deepView, cpuIO.graphWidth));
+        cpuTotal.updateGraph();
+        cpuUser.updateGraph();
+        cpuSystem.updateGraph();
+        cpuIO.updateGraph();
     }
 
     Connections {
@@ -66,10 +67,12 @@ Page {
                 }
             }
 
-            GraphData {
+            SysMonGraph {
                 id: cpuTotal
                 graphTitle: qsTr("Total")
                 graphHeight: 200
+                dataType: [DataSource.CpuTotal]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -79,10 +82,12 @@ Page {
                 clickEnabled: false
             }
 
-            GraphData {
+            SysMonGraph {
                 id: cpuUser
                 graphTitle: qsTr("User processes")
                 graphHeight: 200
+                dataType: [DataSource.CpuUser]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -92,10 +97,12 @@ Page {
                 clickEnabled: false
             }
 
-            GraphData {
+            SysMonGraph {
                 id: cpuSystem
                 graphTitle: qsTr("System processes")
                 graphHeight: 200
+                dataType: [DataSource.CpuSystem]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -105,10 +112,12 @@ Page {
                 clickEnabled: false
             }
 
-            GraphData {
+            SysMonGraph {
                 id: cpuIO
                 graphTitle: qsTr("IO wait")
                 graphHeight: 200
+                dataType: [DataSource.CpuIO]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {

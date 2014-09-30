@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import net.thecust.sysmon 1.0
 
 Page {
     id: page
@@ -16,8 +17,8 @@ Page {
     }
 
     function updateGraph() {
-        cellRx.setPoints(sysmon.cellRx(deepView, cellRx.graphWidth));
-        cellTx.setPoints(sysmon.cellTx(deepView, cellTx.graphWidth));
+        cellRx.updateGraph();
+        cellTx.updateGraph();
     }
 
     Connections {
@@ -64,12 +65,14 @@ Page {
                 }
             }
 
-            GraphData {
+            SysMonGraph {
                 id: cellRx
                 graphTitle: qsTr("Received data")
                 graphHeight: 200
+                dataType: [DataSource.NetworkCellRx]
                 scale: true
                 axisY.units: "Kb"
+                valueTotal: true
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }
@@ -77,12 +80,14 @@ Page {
                 clickEnabled: false
             }
 
-            GraphData {
+            SysMonGraph {
                 id: cellTx
                 graphTitle: qsTr("Transmitted data")
                 graphHeight: 200
+                dataType: [DataSource.NetworkCellTx]
                 scale: true
                 axisY.units: "Kb"
+                valueTotal: true
                 valueConverter: function(value) {
                     return (value/1000).toFixed(0);
                 }

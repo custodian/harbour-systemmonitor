@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import net.thecust.sysmon 1.0
 
 Page {
     id: page
@@ -16,7 +17,7 @@ Page {
     }
 
     function updateGraph() {
-        graphBattery.setPoints(sysmon.batteryCharge(deepView, graphBattery.graphWidth));
+        graphBattery.updateGraph();
     }
 
     Connections {
@@ -63,10 +64,12 @@ Page {
                 }
             }
 
-            GraphData {
+            SysMonGraph {
                 id: graphBattery
                 graphTitle: qsTr("Battery charge")
                 graphHeight: 200
+                dataType: [DataSource.BatteryPercentage]
+                dataAvg: true
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
