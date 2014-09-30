@@ -20,6 +20,7 @@ public slots:
 private:
     int m_batteryFull;
     int m_batteryNow;
+    int m_capacity;
 };
 
 #endif // DATASOURCEBATTERY_H
