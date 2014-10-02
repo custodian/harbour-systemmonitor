@@ -1,7 +1,7 @@
 Name: harbour-systemmonitor
 Summary: System Monitor
 Version: 0.6
-Release: 18
+Release: 19
 # The contents of the Group field must be one of the groups listed here:
 # http://gitorious.org/meego-developer-tools/spectacle/blobs/master/data/GROUPS
 Group: Qt/Qt
@@ -43,7 +43,6 @@ Files:
   - '%{_datadir}/applications/%{name}.desktop'
   - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
   - '%{_libdir}/systemd/user/%{name}d.service'
-  - '%{_libdir}/systemd/user/user-session.target.wants/%{name}d.service'
 
 # For more information about yaml and what's supported in Sailfish OS
 # build system, please see https://wiki.merproject.org/wiki/Spectacle

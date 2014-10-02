@@ -14,7 +14,7 @@ Name:       harbour-systemmonitor
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    System Monitor
 Version:    0.6
-Release:    18
+Release:    19
 Group:      Qt/Qt
 License:    LICENSE
 URL:        http://thecust.net/
@@ -58,8 +58,6 @@ rm -rf %{buildroot}
 %qmake5_install
 
 # >> install post
-mkdir -p %{buildroot}%{_libdir}/systemd/user/user-session.target.wants
-ln -s ../%{name}d.service %{buildroot}%{_libdir}/systemd/user/user-session.target.wants/%{name}d.service
 # << install post
 
 desktop-file-install --delete-original       \
@@ -74,12 +72,14 @@ exit 0
 
 %preun
 # >> preun
+su nemo -c "systemctl --user disable %{name}d"
 su nemo -c "systemctl --user stop %{name}d"
 # << preun
 
 %post
 # >> post
 su nemo -c "systemctl --user daemon-reload"
+su nemo -c "systemctl --user enable %{name}d"
 su nemo -c "systemctl --user start %{name}d"
 # << post
 
@@ -95,6 +95,5 @@ su nemo -c "systemctl --user daemon-reload"
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 %{_libdir}/systemd/user/%{name}d.service
-%{_libdir}/systemd/user/user-session.target.wants/%{name}d.service
 # >> files
 # << files

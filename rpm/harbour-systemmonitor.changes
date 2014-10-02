@@ -8,6 +8,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Thu Oct 2 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.6-19
+- Fix autostart on boot issue
+
 * Tue Sep 30 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.6-18
 - Android battery support
 - Graph ui fixes
