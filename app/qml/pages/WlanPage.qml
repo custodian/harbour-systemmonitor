@@ -13,7 +13,6 @@ Page {
                 break;
             }
         }
-        updateGraph()
     }
 
     function updateGraph() {
@@ -29,7 +28,7 @@ Page {
     }
 
     Component.onCompleted: {
-        deepViewChanged();
+        updateGraph();
     }
 
     SilicaFlickable {
@@ -70,6 +69,7 @@ Page {
                 graphTitle: qsTr("Received data")
                 graphHeight: 200
                 dataType: [DataSource.NetworkWlanRx]
+                dataDepth: deepView
                 scale: true
                 axisY.units: "Kb"
                 valueTotal: true
@@ -85,6 +85,7 @@ Page {
                 graphTitle: qsTr("Transmitted data")
                 graphHeight: 200
                 dataType: [DataSource.NetworkWlanTx]
+                dataDepth: deepView
                 scale: true
                 axisY.units: "Kb"
                 valueTotal: true

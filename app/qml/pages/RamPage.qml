@@ -13,7 +13,6 @@ Page {
                 break;
             }
         }
-        updateGraph()
     }
 
     function updateGraph() {
@@ -29,7 +28,7 @@ Page {
     }
 
     Component.onCompleted: {
-        deepViewChanged();
+        updateGraph();
     }
 
     SilicaFlickable {
@@ -71,6 +70,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.RAMUsed]
                 dataAvg: true
+                dataDepth: deepView
                 scale: true
                 axisY.units: "Mb"
                 valueConverter: function(value) {
@@ -86,6 +86,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.SwapUsed]
                 dataAvg: true
+                dataDepth: deepView
                 scale: true
                 axisY.units: "Mb"
                 valueConverter: function(value) {

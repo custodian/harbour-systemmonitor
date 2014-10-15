@@ -13,7 +13,6 @@ Page {
                 break;
             }
         }
-        updateGraph()
     }
 
     function updateGraph() {
@@ -28,7 +27,10 @@ Page {
     }
 
     Component.onCompleted: {
-        deepViewChanged();
+//        page.deepViewChanged.connect(function() {
+//            updateGraph();
+//        });
+        updateGraph();
     }
 
     SilicaFlickable {
@@ -70,6 +72,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.BatteryPercentage]
                 dataAvg: true
+                dataDepth: deepView
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {

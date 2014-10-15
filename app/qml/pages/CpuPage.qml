@@ -13,7 +13,6 @@ Page {
                 break;
             }
         }
-        updateGraph()
     }
 
     function updateGraph() {
@@ -31,7 +30,7 @@ Page {
     }
 
     Component.onCompleted: {
-        deepViewChanged();
+        updateGraph();
     }
 
     SilicaFlickable {
@@ -73,6 +72,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.CpuTotal]
                 dataAvg: true
+                dataDepth: deepView
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -88,6 +88,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.CpuUser]
                 dataAvg: true
+                dataDepth: deepView
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -103,6 +104,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.CpuSystem]
                 dataAvg: true
+                dataDepth: deepView
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {
@@ -118,6 +120,7 @@ Page {
                 graphHeight: 200
                 dataType: [DataSource.CpuIO]
                 dataAvg: true
+                dataDepth: deepView
                 minY: 0
                 maxY: 100
                 valueConverter: function(value) {

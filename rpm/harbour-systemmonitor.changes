@@ -8,6 +8,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Wed Oct 15 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.6-20
+- Fix interval selection on data pages
+
 * Thu Oct 2 2014 Basil Semuonov <basil.semuonov@gmail.com> 0.6-19
 - Fix autostart on boot issue
 

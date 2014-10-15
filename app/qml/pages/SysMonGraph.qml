@@ -7,6 +7,12 @@ GraphData {
     property int dataDepth: settings.deepView
     property bool dataAvg: false
 
+    onDataDepthChanged: {
+        if (dataSource) {
+            updateGraph();
+        }
+    }
+
     //TODO: really such a thing?
     onDataAvgChanged: {
         valueTotal = !dataAvg;

@@ -76,6 +76,10 @@ ApplicationWindow
             interval: 7
         }
         ListElement {
+            label: "10 days"
+            interval: 10
+        }
+        ListElement {
             label: "14 days"
             interval: 14
         }
