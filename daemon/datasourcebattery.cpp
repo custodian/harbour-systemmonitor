@@ -1,15 +1,28 @@
 #include "datasourcebattery.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QString>
 
 DataSourceBattery::DataSourceBattery(SystemSnapshot *parent) :
     DataSource(parent)
 {
-    m_batteryFull = registerSystemSource("/sys/class/power_supply/battery/charge_full");
-    m_batteryNow = registerSystemSource("/sys/class/power_supply/battery/charge_now");
-    m_capacity = registerSystemSource("/sys/class/power_supply/battery/capacity");
+    QDir battery("/sys/class/power_supply");
+    QStringList filters;
+    filters << "*battery";
+    battery.setNameFilters(filters);
+
+    const QStringList files = battery.entryList();
+    QStringListIterator iterator(files);
+    QString fileName;
+    if ( iterator.hasNext() ) {
+        fileName = battery.absoluteFilePath(iterator.next());
+        qDebug() << "Found battery root: " << fileName;
+    }
+    m_batteryFull = registerSystemSource(fileName + "/charge_full");
+    m_batteryNow = registerSystemSource(fileName + "/charge_now");
+    m_capacity = registerSystemSource(fileName + "/capacity");
 
     connect(parent, SIGNAL(processSystemSnapshot()), SLOT(processSystemSnapshot()));
 }
